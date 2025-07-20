@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Cave{% endblock %}
+
+{% block body %}
+<div class="cave-carousel-container">
+  <h1 class="carousel-title">My Cave</h1>
+
+  <div class="carousel-wrapper">
+    <button class="carousel-arrow left">&#8592;</button>
+
+    <div class="carousel-caves">
+      {% for cave in caves %}
+        <div class="cave-slot">
+          <p class="cave-name">{{ cave.nom }}</p>
+          <div class="cave-frame">
+            <img src="{{ asset('images/cave-a-vin.png') }}" alt="Cave à vin" class="cave-background">
+            {% if cave.image %}
+              <img src="{{ asset('uploads/caves/' ~ cave.image) }}" alt="Image de la cave" class="cave-inside">
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+
+      <div class="cave-slot">
+        <p class="cave-name">Nouvelle cave</p>
+        <a href="{{ path('app_new_vin') }}">
+          <div class="cave-frame">
+            <img src="{{ asset('images/cave-a-vin.png') }}" alt="Nouvelle cave" class="cave-background">
+            <img src="{{ asset('images/add-cave-icon.png') }}" alt="Ajouter" class="cave-inside add-icon">
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <button class="carousel-arrow right">&#8594;</button>
+  </div>
+</div>
+{% endblock %}

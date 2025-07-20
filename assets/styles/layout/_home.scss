@@ -1,0 +1,80 @@
+@use '../base/variables' as v;
+@use '../base/mixins';
+@use "sass:color";
+
+.home-page {
+    position: relative;
+    width: 100%;
+    min-height: 100vh; 
+    overflow: hidden;
+
+    // Image de fond avec opacité (uniquement l'image est affectée)
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('../../images/bg-vin.jpg');
+        background-size: cover;
+        background-position: center;
+        z-index: 0;
+    }
+
+    .overlay {
+        position: absolute;
+        inset: 0;  
+        background-color: v.$white-opacity-25;
+        z-index: 1;
+        @include mixins.flex-center;
+        padding: 4rem 1rem;
+    }
+
+    .welcome-box {
+        position: relative;
+        z-index: 2;
+        background-color: v.$accent-opacity-40;
+        border-radius: v.$radius-xl;
+        padding: 2rem 3rem;
+        max-width: 800px;
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-family: v.$font-family;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+
+        h1 {
+            font-family: v.$font-family;
+            font-weight: v.$font-weight-bold;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            font-size: v.$font-size-base;
+            margin-bottom: 1rem;
+        }
+
+        .btn-group {
+            @include mixins.flex-center;
+            gap: 1rem;
+            margin-top: 2rem;
+
+            .btn-main {
+                @include mixins.button(v.$color-accent);
+            }
+
+            .btn-secondary {
+                @include mixins.button(v.$color-accent);
+            }
+        }
+    }
+
+    @media (max-width: 600px) {
+        .welcome-box {
+            padding: 1.25rem;
+
+            h1 {
+                font-size: 1.75rem;
+            }
+        }
+    }
+}

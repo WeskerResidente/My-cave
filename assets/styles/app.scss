@@ -1,0 +1,10 @@
+// COMPONENTS
+@use "components/navbar";
+@use "components/footer";
+
+//LAYOUT
+@use 'layout/home';
+@use "layout/cave-a-vin";
+
+//BASE
+@use "base/global";

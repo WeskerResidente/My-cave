@@ -2,8 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <title>{% block title %}Acceuil{% endblock %}</title>
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
@@ -12,8 +11,48 @@
             {{ encore_entry_script_tags('app') }}
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
+
+        <link rel="stylesheet" href="{{ asset('style/style.css') }}">
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% block navbar %}
+
+            <nav class="navbar">
+                <div class="logo">
+                    <a href=""><img src="{{ asset('images/logo.png') }}" alt="MyCave Logo"></a>
+                </div>
+
+                <nav class="nav-links">
+                    <a href="">Accueil</a>
+                    <a href="">Les vins</a>
+                    <a href="">Toutes les caves</a>
+                    <a href="{{ path('app_cave_a_vin') }}">My cave</a>
+                    <a href="">Contact</a>
+                </nav>
+
+                <div class="auth-links">
+                    {% if app.user %}
+                        <a href="">Déconnexion</a>
+                    {% else %}
+                        <a href="">Inscription</a>
+                        <a href="">Connexion</a>
+                    {% endif %}
+                </div>
+            </nav>
+        {% endblock %}
+            {% block body %}{% endblock %}
+        {% block footer %}
+            <footer class="site-footer">
+                    <div class="footer-links">
+                        <a href="#">À propos</a>
+                        <a href="#">Contact</a>
+                        <a href="#">Politique de confidentialité</a>
+                        <a href="#">Conditions d'utilisation</a>
+                    </div>
+                    <div class="footer-copy">
+                        &copy; {{ "now"|date("Y") }} MyCave
+                    </div>
+            </footer>
+        {% endblock %}
     </body>
 </html>

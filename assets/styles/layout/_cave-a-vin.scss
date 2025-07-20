@@ -1,0 +1,88 @@
+@use '../base/variables' as v;
+
+.cave-carousel-container {
+  text-align: center;
+  padding: 2rem;
+  background: url('../../images/vignes.png') no-repeat center center;
+  background-size: cover;
+  color: white;
+  min-height: 100vh;
+}
+
+.carousel-title {
+  font-family: v.$font-family;
+  font-weight: v.$font-weight-bold;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.carousel-arrow {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.carousel-caves {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  padding: 0 1rem;
+}
+
+.cave-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+
+  .cave-name {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+
+  .cave-frame {
+    position: relative;
+    width: 100%;
+    height: auto;
+      aspect-ratio: 1 / 1.5;
+      display: flex;
+  justify-content: center;
+  align-items: center;
+    .cave-background {
+      width: 100%;
+      display: block;
+          height: auto;
+    }
+
+    .cave-inside {
+    position: absolute;
+    width: 45%;
+    height: auto;
+    top: 27%;
+    left: 27%;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+    z-index: 2;
+    pointer-events: none;
+    }
+
+    .cave-inside.add-icon {
+    transform: translate(0,40%) rotate(90deg);
+      transform-origin: center;
+    }
+  }
+}
