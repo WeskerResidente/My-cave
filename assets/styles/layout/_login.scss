@@ -1,0 +1,102 @@
+@use '../base/variables' as v;
+
+.page-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: v.$white-opacity-25;
+  padding: 2rem;
+  font-family: v.$font-family;
+
+  .form-login {
+    background-color: #fff;
+    padding: 2rem 2.5rem;
+    border-radius: v.$radius-xl;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 500px;
+    color: v.$color-secondary;
+
+    .login-title {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      color: v.$color-primary;
+    }
+
+    .login-field {
+      margin-bottom: 1rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      .input-login {
+        width: 95%;
+        padding: 0.75rem;
+        border: 1px solid v.$accent-opacity-40;
+        border-radius: 0.5rem;
+        background-color: v.$white-opacity-25;
+        color: v.$color-secondary;
+
+        &:focus {
+          border-color: v.$color-primary;
+          outline: none;
+        }
+      }
+    }
+
+    .login-info {
+      background-color: rgba(0, 128, 0, 0.1);
+      color: darkgreen;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+
+      a {
+        color: v.$color-primary;
+        font-weight: bold;
+        margin-left: 0.5rem;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .login-error {
+      background-color: rgba(255, 0, 0, 0.1);
+      color: darkred;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .btn-login {
+      display: inline-block;
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.75rem;
+      font-weight: v.$font-weight-bold;
+      background-color: v.$color-primary;
+      color: #fff;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: darken(v.$color-primary, 10%);
+      }
+    }
+  }
+
+
+
+
+}

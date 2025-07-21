@@ -23,21 +23,24 @@
                 </div>
 
                 <nav class="nav-links">
-                    <a href="">Accueil</a>
+                    <a href="{{ path('app_home') }}">Accueil</a>
                     <a href="">Les vins</a>
                     <a href="">Toutes les caves</a>
                     <a href="{{ path('app_cave_a_vin') }}">My cave</a>
                     <a href="">Contact</a>
                 </nav>
 
-                <div class="auth-links">
-                    {% if app.user %}
-                        <a href="">Déconnexion</a>
-                    {% else %}
-                        <a href="">Inscription</a>
-                        <a href="">Connexion</a>
-                    {% endif %}
-                </div>
+            <div class="auth-links">
+                {% if app.user %}
+                    <form action="{{ path('app_logout') }}" method="post">
+                        <a href="{{ path('app_logout') }}">🚪 Déconnexion</a>
+                    </form>
+                    <span>Bienvenue, {{ app.user.pseudo ?? app.user.email }}</span>
+                {% else %}
+                    <a href="{{ path('app_register') }}">Inscription</a>
+                    <a href="{{ path('app_login') }}">Connexion</a>
+                {% endif %}
+            </div>
             </nav>
         {% endblock %}
             {% block body %}{% endblock %}

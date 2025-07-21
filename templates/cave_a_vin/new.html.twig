@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une cave{% endblock %}
+
+{% block body %}
+<section class="new-cave-page">
+  <div class="form-box">
+    <h1>Créer une nouvelle cave à vin</h1>
+
+    {{ form_start(form) }}
+
+    <div class="form-group">
+      {{ form_label(form.nom) }}
+      {{ form_widget(form.nom) }}
+      {{ form_errors(form.nom) }}
+    </div>
+
+    <div class="form-group">
+      {{ form_label(form.image) }}
+      {{ form_widget(form.image) }}
+      {{ form_errors(form.image) }}
+    </div>
+
+    <button type="submit" class="btn">Créer la cave</button>
+
+    {{ form_end(form) }}
+  </div>
+</section>
+{% endblock %}

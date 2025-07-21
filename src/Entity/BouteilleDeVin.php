@@ -54,5 +54,18 @@ class BouteilleDeVin
         $this->dateModification = new \DateTimeImmutable();
     }
 
-    // Getters & Setters...
+    #[ORM\ManyToOne(inversedBy: 'bouteilles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private CaveAVin $cave;
+
+    public function getCave(): CaveAVin
+    {
+        return $this->cave;
+    }
+
+    public function setCave(CaveAVin $cave): self
+    {
+        $this->cave = $cave;
+        return $this;
+    }
 }

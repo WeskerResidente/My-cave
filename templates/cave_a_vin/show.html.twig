@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ cave.nom }}{% endblock %}
+
+{% block body %}
+<section class="cave-detail">
+  <h1>{{ cave.nom }}</h1>
+  <p class="description">{{ cave.description ?? 'Pas de description fournie.' }}</p>
+
+  {% if cave.image and cave.image != 'default-cave.jpg' %}
+    <img src="{{ asset('uploads/caves/' ~ cave.image) }}" alt="{{ cave.nom }}" style="max-width: 300px;">
+  {% else %}
+    <img src="{{ asset('images/default-cave.jpg') }}" alt="Image par défaut" style="max-width: 300px;">
+  {% endif %}
+
+  <p>Ajoutée le : {{ cave.dateAjout|date('d/m/Y') }}</p>
+
+  <h2>Vins dans cette cave</h2>
+  <div class="wine-list">
+    {% if cave.bouteilles is not empty %}
+      {% for vin in cave.bouteilles %}
+        <div class="wine-card">
+          <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}" style="max-width: 100px;">
+          <h3>{{ vin.nom }}</h3>
+          <p>{{ vin.appelation }} - {{ vin.annee }}</p>
+          <p>{{ vin.region }} | {{ vin.cepage }}</p>
+          <p>{{ vin.prix }} €</p>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="wine-card empty">
+        <a href="{{ path('app_ajouter_vin', { id: cave.id }) }}">
+          <img src="{{ asset('images/add-vin-placeholder.png') }}" alt="Ajouter un vin" style="max-width: 100px;">
+          <p><strong>Ajouter un vin</strong></p>
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

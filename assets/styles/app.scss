@@ -5,6 +5,8 @@
 //LAYOUT
 @use 'layout/home';
 @use "layout/cave-a-vin";
-
+@use 'layout/register';
+@use 'layout/login';
+@use 'layout/cave-detail';
 //BASE
 @use "base/global";

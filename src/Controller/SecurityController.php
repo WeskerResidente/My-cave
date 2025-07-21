@@ -14,14 +14,23 @@ class SecurityController extends AbstractController
     {
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
+            // Message personnalisé
+            $customError = null;
+            if ($error) {
+                $message = $error->getMessageKey();
 
-        // last username entered by the user
-        $lastUsername = $authenticationUtils->getLastUsername();
+                if ($message === 'Invalid credentials.') {
+                    $customError = 'Email ou mot de passe incorrect.';
+                } elseif ($message === 'User could not be found.') {
+                    $customError = 'Cet email est introuvable.';
+                } else {
+                    $customError = 'Une erreur est survenue lors de la connexion.';
+                }
+            }
+                return $this->render('security/login.html.twig', [
 
-        return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error,
-        ]);
+                    'error' => $customError,
+                ]);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]
