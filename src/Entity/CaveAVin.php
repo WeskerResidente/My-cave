@@ -135,7 +135,7 @@ class CaveAVin
         $this->description = $description;
         return $this;
     }
-
+    
     /** @return Collection<int, BouteilleDeVin> */
     public function getVins(): Collection
     {
