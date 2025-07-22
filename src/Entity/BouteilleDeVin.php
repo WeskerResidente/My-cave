@@ -20,20 +20,11 @@ class BouteilleDeVin
     #[ORM\Column(type: 'integer')]
     private int $annee;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private string $region;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private string $cepage;
-
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     private float $prix;
 
     #[ORM\Column(type: 'string', length: 255)]
     private string $images;
-
-    #[ORM\Column(type: 'string', length: 255)]
-    private string $appelation;
 
     #[ORM\Column(type: 'text')]
     private string $description;
@@ -48,24 +39,69 @@ class BouteilleDeVin
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $dateModification;
 
+    #[ORM\ManyToOne(inversedBy: 'bouteilles')]
+    #[ORM\JoinColumn(nullable: false)]
+    private CaveAVin $cave;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private Cepage $cepage;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private Pays $pays;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private Region $region;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private Appelation $appelation;
+
     public function __construct()
     {
         $this->dateAjout = new \DateTimeImmutable();
         $this->dateModification = new \DateTimeImmutable();
     }
 
-    #[ORM\ManyToOne(inversedBy: 'bouteilles')]
-    #[ORM\JoinColumn(nullable: false)]
-    private CaveAVin $cave;
+    // Getters & Setters
 
-    public function getCave(): CaveAVin
-    {
-        return $this->cave;
-    }
+    public function getId(): ?int { return $this->id; }
 
-    public function setCave(CaveAVin $cave): self
-    {
-        $this->cave = $cave;
-        return $this;
-    }
+    public function getNom(): string { return $this->nom; }
+    public function setNom(string $nom): self { $this->nom = $nom; return $this; }
+
+    public function getAnnee(): int { return $this->annee; }
+    public function setAnnee(int $annee): self { $this->annee = $annee; return $this; }
+
+    public function getPrix(): float { return $this->prix; }
+    public function setPrix(float $prix): self { $this->prix = $prix; return $this; }
+
+    public function getImages(): string { return $this->images; }
+    public function setImages(string $images): self { $this->images = $images; return $this; }
+
+    public function getDescription(): string { return $this->description; }
+    public function setDescription(string $description): self { $this->description = $description; return $this; }
+
+    public function getCreePar(): User { return $this->creePar; }
+    public function setCreePar(User $creePar): self { $this->creePar = $creePar; return $this; }
+
+    public function getDateAjout(): \DateTimeImmutable { return $this->dateAjout; }
+    public function getDateModification(): \DateTimeImmutable { return $this->dateModification; }
+
+    public function getCave(): CaveAVin { return $this->cave; }
+    public function setCave(CaveAVin $cave): self { $this->cave = $cave; return $this; }
+
+    public function getCepage(): Cepage { return $this->cepage; }
+    public function setCepage(Cepage $cepage): self { $this->cepage = $cepage; return $this; }
+
+    public function getPays(): Pays { return $this->pays; }
+    public function setPays(Pays $pays): self { $this->pays = $pays; return $this; }
+
+    public function getRegion(): Region { return $this->region; }
+    public function setRegion(Region $region): self { $this->region = $region; return $this; }
+
+    public function getAppelation(): Appelation { return $this->appelation; }
+    public function setAppelation(Appelation $appelation): self { $this->appelation = $appelation; return $this; }
 }

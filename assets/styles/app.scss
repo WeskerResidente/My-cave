@@ -8,5 +8,9 @@
 @use 'layout/register';
 @use 'layout/login';
 @use 'layout/cave-detail';
+@use 'layout/new-caves';
+@use 'layout/caves_listes';
+@use 'layout/vins_listes';
+
 //BASE
 @use "base/global";

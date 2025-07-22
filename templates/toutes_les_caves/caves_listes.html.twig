@@ -1,0 +1,63 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Toutes les caves{% endblock %}
+
+{% block body %}
+  <section class="page-toutes-caves">
+    <h1 class="main-title">Toutes les caves</h1>
+
+    <form method="get" class="filters-bar">
+      <div class="search-input">
+        <i class="fa fa-search"></i>
+        <input type="text" name="q" placeholder="Recherche..." value="{{ app.request.get('q') }}">
+      </div>
+      <div class="select-wrapper">
+        <select name="vin">
+          <option value="">Tous les vins </option>
+          {% for bouteille in bouteille_de_vin %}
+            <option value="{{ bouteille.id }}" {% if bouteille.id == app.request.get('vin') %}selected{% endif %}>
+              {{ bouteille.nom }}
+            </option>
+          {% endfor %}
+        </select>
+        <select name="region">
+          <option value="">Régions</option>
+          {% for region in regions %}
+            <option value="{{ region }}" {% if region == app.request.get('region') %}selected{% endif %}>{{ region }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="hidden-submit">Rechercher</button>
+    </form>
+
+    <div class="caves-grid">
+      {% for cave in caves %}
+        <div class="cave-card">
+          <a href="{{ path('app_cave_show', { id: cave.id }) }}">
+            <img src="{{ asset(cave.image ? 'uploads/caves/' ~ cave.image : 'images/placeholder-cave.png') }}" alt="{{ cave.nom }}">
+            <p class="cave-title">{{ cave.nom }}</p>
+          </a>
+        </div>
+      {% else %}
+        <p>Aucune cave trouvée.</p>
+      {% endfor %}
+    </div>
+
+    <div class="pagination-buttons">
+    {% if pagination.currentPageNumber > 1 %}
+        <a href="{{ path('app_liste_caves', query|merge({'page': pagination.currentPageNumber - 1})) }}" class="btn-pagination">
+        page précédente
+        </a>
+    {% endif %}
+
+    {% if pagination.currentPageNumber < pagination.pageCount %}
+        <a href="{{ path('app_liste_caves', query|merge({'page': pagination.currentPageNumber + 1})) }}" class="btn-pagination">
+        page suivante
+        </a>
+    {% endif %}
+    </div>
+
+    </div>
+  </section>
+{% endblock %}

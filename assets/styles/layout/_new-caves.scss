@@ -1,0 +1,108 @@
+@use "sass:color";
+@use "../base/variables" as v;
+@use "../base/mixins" as m;
+
+.new-cave-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 2rem;
+  @include m.flex-center;
+
+  // Image de fond floutée
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('../../images/vignes.png') center/cover no-repeat;
+    filter: blur(8px);
+    z-index: 0;
+  }
+
+  // Voile blanc semi-transparent
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.45);
+    z-index: 1;
+  }
+
+  .form-box {
+    position: relative;
+    z-index: 2;
+    background-color: rgba(255, 255, 255, 0.75); // plus lisible que 0.767
+    padding: 3rem 5rem;
+    border-radius: v.$radius-xl;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    max-width: 550px;
+    width: 100%;
+    color: v.$color-primary;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      font-family: v.$font-family;
+      font-weight: v.$font-weight-bold;
+      color: v.$color-primary;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 1.75rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.6rem;
+        font-weight: v.$font-weight-bold;
+        font-family: v.$font-family;
+        font-size: 1rem;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1px solid v.$color-primary;
+        border-radius: v.$radius-pill;
+        background-color: rgba(255, 255, 255, 0.25);
+        color: v.$color-secondary;
+        font-family: v.$font-family;
+        font-size: v.$font-size-base;
+        transition: all 0.3s ease;
+        margin-right: 15rem;
+
+        &:focus {
+          outline: none;
+          background-color: rgba(255, 255, 255, 0.45);
+          border-color: v.$color-accent;
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+        border-radius: v.$radius-xl;
+      }
+
+      .form-error-message {
+        color: color.scale(v.$color-primary, $lightness: 25%);
+        font-size: 0.85rem;
+        margin-top: 0.4rem;
+      }
+    }
+
+    .btn {
+      @include m.button(v.$color-primary);
+      font-weight: v.$font-weight-bold;
+      font-family: v.$font-family;
+      width: 100%;
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+      transition: background-color 0.3s ease;
+    }
+  }
+}

@@ -8,6 +8,7 @@ use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Entity\BouteilleDeVin;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CaveAVinRepository::class)]
 class CaveAVin
@@ -125,6 +126,13 @@ class CaveAVin
     #[ORM\OneToMany(mappedBy: 'cave', targetEntity: BouteilleDeVin::class, orphanRemoval: true)]
     private Collection $vins;
 
+    #[ORM\Column(length: 255)]
+    private ?string $region = null;
+    #[ORM\Column(type: 'text', nullable: true)]
+    #[Assert\Length(
+        max: 500,
+        maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères.'
+    )]
     public function getDescription(): ?string
     {
         return $this->description;
@@ -142,4 +150,16 @@ class CaveAVin
         return $this->vins;
     }
 
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(string $region): static
+    {
+        $this->region = $region;
+
+        return $this;
+    }
+    
 }
