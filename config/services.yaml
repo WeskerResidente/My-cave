@@ -6,6 +6,7 @@
 parameters:
     cave_images_directory: '%kernel.project_dir%/public/uploads/caves'
     caves_directory: '%kernel.project_dir%/public/uploads/caves'
+    vins_images_directory: '%kernel.project_dir%/public/uploads/vins'
 services:
     # default configuration for services in *this* file
     _defaults:

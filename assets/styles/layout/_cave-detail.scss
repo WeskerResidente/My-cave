@@ -40,7 +40,8 @@
       }
 
       img {
-        max-height: 220px;
+        width: 100%;
+        height: 180px;
         object-fit: contain;
         margin-bottom: 0.5rem;
       }
@@ -136,7 +137,7 @@
   img {
     max-width: 300px;
     flex-shrink: 0;
-    border-radius: v.$radius-xl;
+
     box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
     object-fit: cover;
   }
@@ -146,7 +147,7 @@
     flex-grow: 1;
     background-color: rgba(255, 255, 255, 0.65);
     padding: 1.5rem;
-    border-radius: v.$radius-xl;
+
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     font-size: 1rem;
     color: v.$color-secondary;
@@ -167,7 +168,6 @@
   font-size: 0.9rem;
   background-color: white;
   border: 1px solid v.$color-primary;
-  border-radius: v.$radius-pill;
   color: v.$color-primary;
   cursor: pointer;
   padding: 0.4rem 1rem;
@@ -187,7 +187,6 @@
   background-color: v.$color-primary;
   color: white;
   border: none;
-  border-radius: v.$radius-pill;
   cursor: pointer;
 
   &:hover {
@@ -202,11 +201,82 @@
 
   img {
     max-width: 300px;
-    border-radius: v.$radius-xl;
     margin-bottom: 0.5rem;
   }
 
   .btn-edit {
     margin-top: 0;
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+
+  .modal-content {
+    background: white;
+    padding: 2rem 2.5rem;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    text-align: center;
+
+    p {
+      margin-bottom: 1.5rem;
+      color: v.$color-secondary;
+    }
+
+    .confirm-btn,
+    .cancel-btn {
+      padding: 0.6rem 1.2rem;
+      margin: 0 0.5rem;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .confirm-btn {
+      background-color: v.$color-primary;
+      color: white;
+
+      &:hover {
+        background-color: darken(v.$color-primary, 10%);
+      }
+    }
+
+    .cancel-btn {
+      background-color: lightgray;
+      color: black;
+
+      &:hover {
+        background-color: gray;
+        color: white;
+      }
+    }
+  }
+}
+
+
+.btn-remove {
+  background-color: crimson;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: darkred;
   }
 }

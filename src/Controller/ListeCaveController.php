@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-use App\Repository\BouteilleDeVinRepository; // à ajouter si tu l'utilises
+use App\Repository\BouteilleDeVinRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ListeCaveController extends AbstractController

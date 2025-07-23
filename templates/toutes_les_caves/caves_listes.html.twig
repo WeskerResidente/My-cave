@@ -10,24 +10,9 @@
     <form method="get" class="filters-bar">
       <div class="search-input">
         <i class="fa fa-search"></i>
-        <input type="text" name="q" placeholder="Recherche..." value="{{ app.request.get('q') }}">
+        <input type="text" name="q" placeholder="Recherche une cave..." value="{{ app.request.get('q') }}">
       </div>
-      <div class="select-wrapper">
-        <select name="vin">
-          <option value="">Tous les vins </option>
-          {% for bouteille in bouteille_de_vin %}
-            <option value="{{ bouteille.id }}" {% if bouteille.id == app.request.get('vin') %}selected{% endif %}>
-              {{ bouteille.nom }}
-            </option>
-          {% endfor %}
-        </select>
-        <select name="region">
-          <option value="">Régions</option>
-          {% for region in regions %}
-            <option value="{{ region }}" {% if region == app.request.get('region') %}selected{% endif %}>{{ region }}</option>
-          {% endfor %}
-        </select>
-      </div>
+    
       <button type="submit" class="hidden-submit">Rechercher</button>
     </form>
 

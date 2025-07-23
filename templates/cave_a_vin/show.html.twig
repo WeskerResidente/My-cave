@@ -34,96 +34,78 @@
         {% if isOwner %}
           <button id="edit-desc-btn" class="btn-edit small">📝 Modifier la description</button>
         {% endif %}
+        {% if isOwner %}
+          <div class="add-wine-button-wrapper">
+          <a href="{{ path('app_vin_listes', { cave: cave.id }) }}" class="btn-add-wine">
+            ➕ Ajouter un vin à cette cave
+          </a>
+          </div>
+        {% endif %}
 
         {% if cave.bouteilles is not empty %}
-          {% set total = 0 %}
-          {% for vin in cave.bouteilles %}{% set total = total + vin.prix %}{% endfor %}
-          <p>Moyenne des prix : {{ (total / cave.bouteilles|length)|number_format(2, '.', ',') }} €</p>
+            {% set total = 0 %}
+            {% for vin in cave.bouteilles %}
+              {% set total = total + vin.prix %}
+            {% endfor %}
+            <p>Moyenne des prix : {{ (total / cave.bouteilles|length)|number_format(2, '.', ',') }} €</p>
+          {% endif %}
+          </div>
+        </div>
+              {% if cave.bouteilles|length > 0 %}
+          <div class="wine-list">
+            {% for vin in cave.bouteilles %}
+              <div class="wine-card">
+                <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
+                <h3>{{ vin.nom }}</h3>
+                <p>{{ vin.annee }} - {{ vin.pays.nom }}</p>
+                <p>{{ vin.region.nom }}</p>
+                <p><strong>{{ vin.prix }} €</strong></p>
+                <button class="btn-remove" data-vin="{{ vin.id }}" data-nom="{{ vin.nom }}">❌ Retirer</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="wine-list">
+            <div class="wine-card empty" onclick="window.location.href='{{ path('app_vin_listes', { cave: cave.id }) }}'">
+              <img src="{{ asset('images/add-icon.png') }}" alt="Ajouter un vin">
+              <p>Ajouter un vin</p>
+            </div>
+          </div>
         {% endif %}
-      </div>
-    </div>
+
   </section>
 
+  <div id="confirmModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <p>Êtes-vous sûr de vouloir retirer <strong id="vinName"></strong> de cette cave ?</p>
+        <form method="post" id="removeForm" action="{{ path('app_retirer_vin', { caveId: cave.id }) }}">
+        <input type="hidden" name="vin_id" id="vinIdInput">
+        <button type="submit" class="confirm-btn">Oui, retirer</button>
+        <button type="button" class="cancel-btn">Annuler</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.btn-remove').forEach(button => {
+      button.addEventListener('click', () => {
+        const vinId = button.dataset.vin;
+        const vinNom = button.dataset.nom;
+        document.getElementById('vinIdInput').value = vinId;
+        document.getElementById('vinName').textContent = vinNom;
+        document.getElementById('confirmModal').style.display = 'block';
+      });
+    });
+
+    document.querySelector('.cancel-btn')?.addEventListener('click', () => {
+      document.getElementById('confirmModal').style.display = 'none';
+    });
+  </script>
 
   {% if isOwner %}
     <script>
-      const nameBtn = document.getElementById('edit-name-btn');
-      const descBtn = document.getElementById('edit-desc-btn');
-      const nameField = document.getElementById('cave-name');
-      const descField = document.getElementById('cave-description');
-      const imageInput = document.getElementById('image-input');
-      const changeImageBtn = document.getElementById('change-image-btn');
-      const imageDisplay = document.getElementById('cave-image');
-
-      let nameEditing = false;
-      let descEditing = false;
-
-      nameBtn?.addEventListener('click', () => {
-        nameEditing = !nameEditing;
-        nameField.contentEditable = nameEditing;
-        nameBtn.textContent = nameEditing ? '💾 Enregistrer' : '✏️ Nom';
-
-        if (!nameEditing) saveChanges();
-      });
-
-      descBtn?.addEventListener('click', () => {
-        descEditing = !descEditing;
-        descField.contentEditable = descEditing;
-        descBtn.textContent = descEditing ? '💾 Enregistrer' : '📝 Description';
-
-        if (!descEditing) saveChanges();
-      });
-
-      function saveChanges() {
-        fetch('{{ path('app_cave_inline_update', { id: cave.id }) }}', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-          },
-          body: JSON.stringify({
-            nom: nameField.textContent.trim(),
-            description: descField.textContent.trim()
-          })
-        }).then(res => {
-          if (!res.ok) alert("Erreur lors de la sauvegarde.");
-        });
-      }
-
-      changeImageBtn?.addEventListener('click', () => {
-        imageInput.click();
-      });
-
- changeImageBtn?.addEventListener('click', () => {
-  imageInput.click();
-});
-
-imageInput?.addEventListener('change', () => {
-  const file = imageInput.files[0];
-  if (file) {
-    console.log('Fichier à envoyer :', file);
-    const formData = new FormData();
-    formData.append('image', file);
-
-    fetch('{{ path('app_cave_update_image', { id: cave.id }) }}', {
-      method: 'POST',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log('Réponse serveur :', data);
-      if (data.success && data.newImagePath) {
-        imageDisplay.src = data.newImagePath;
-      } else {
-        alert('Erreur lors du téléversement de l’image : ' + (data.error || ''));
-      }
-    });
-  }
-});
-
+      const saveUrl = '{{ path('app_cave_inline_update', { id: cave.id }) }}';
+      const imageUploadUrl = '{{ path('app_cave_update_image', { id: cave.id }) }}';
     </script>
   {% endif %}
 {% endblock %}

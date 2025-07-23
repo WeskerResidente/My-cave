@@ -11,13 +11,13 @@
     </div>
 
     <select name="region">
-    <option value="">Régions</option>
-    {% for r in regions %}
+      <option value="">Régions</option>
+      {% for r in regions %}
         <option value="{{ r.id }}" data-pays-id="{{ r.pays.id }}"
-        {{ app.request.get('region') == r.id ? 'selected' }}>
-        {{ r.nom }}
+          {{ app.request.get('region') == r.id ? 'selected' }}>
+          {{ r.nom }}
         </option>
-    {% endfor %}
+      {% endfor %}
     </select>
 
     <select name="pays">
@@ -34,6 +34,13 @@
       {% endfor %}
     </select>
 
+    <select name="type">
+      <option value="">Type de vin</option>
+      {% for t in types %}
+        <option value="{{ t.id }}" {{ app.request.get('type') == t.id ? 'selected' }}>{{ t.nom }}</option>
+      {% endfor %}
+    </select>
+
     <div class="prix-slider">
       <label>Prix</label>
       <input type="range" min="0" max="1000" value="{{ app.request.get('prix_max') ?? 1000 }}" name="prix_max" oninput="this.nextElementSibling.value = this.value + '€'">
@@ -46,17 +53,37 @@
   <div class="vins-grid">
     {% for vin in vins %}
       <div class="vin-card">
-        <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
-        <h3>{{ vin.nom }}</h3>
-        <p>{{ vin.annee }} - {{ vin.pays.nom }}</p>
-        <p>{{ vin.region.nom }}</p>
-        <p>{{ vin.prix }} €</p>
+        <div class="vin-card-front">
+          <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
+          <h3>{{ vin.nom }}</h3>
+          <p>{{ vin.annee }} - {{ vin.pays.nom }}</p>
+          <p>{{ vin.region.nom }}</p>
+          <p><strong>Cépage :</strong> {{ vin.cepage.nom }}</p>
+          <p><strong>Type :</strong> {{ vin.typeDeVin.nom }}</p>
+          <p><strong>{{ vin.prix }} €</strong></p>
+          <button class="btn-flip">Ajouter à une cave</button>
+        </div>
+
+        <div class="vin-card-back">
+          <form method="post" action="{{ path('app_ajouter_vin_a_cave', {'vinId': vin.id}) }}">
+            <label for="cave-select-{{ vin.id }}">Choisir une cave :</label>
+            <select name="cave_id" id="cave-select-{{ vin.id }}">
+              {% for cave in caves %}
+                <option value="{{ cave.id }}">{{ cave.nom }}</option>
+              {% endfor %}
+            </select>
+            <button type="submit">Ajouter</button>
+          </form>
+        </div>
       </div>
     {% else %}
       <p>Aucun vin trouvé.</p>
     {% endfor %}
   </div>
 
+  <div>
+    <p class="link-wine">Vous ne trouvez pas votre vin ? <a href="{{ path('vin_new') }}">Rajoutez-le ici !</a></p>
+  </div>
   <div class="pagination">
     {{ knp_pagination_render(vins) }}
   </div>

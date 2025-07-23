@@ -48,6 +48,28 @@ class CaveAVin
     {
         return $this->bouteilles;
     }
+
+    public function addBouteille(BouteilleDeVin $bouteille): self
+    {
+        if (!$this->bouteilles->contains($bouteille)) {
+            $this->bouteilles[] = $bouteille;
+            $bouteille->setCave($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBouteille(BouteilleDeVin $bouteille): self
+    {
+        if ($this->bouteilles->removeElement($bouteille)) {
+            if ($bouteille->getCave() === $this) {
+                $bouteille->setCave(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -123,8 +145,8 @@ class CaveAVin
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'cave', targetEntity: BouteilleDeVin::class, orphanRemoval: true)]
-    private Collection $vins;
+    // #[ORM\OneToMany(mappedBy: 'cave', targetEntity: BouteilleDeVin::class, orphanRemoval: true)]
+    // private Collection $vins;
 
     #[ORM\Column(length: 255)]
     private ?string $region = null;
@@ -144,11 +166,11 @@ class CaveAVin
         return $this;
     }
     
-    /** @return Collection<int, BouteilleDeVin> */
-    public function getVins(): Collection
-    {
-        return $this->vins;
-    }
+    // /** @return Collection<int, BouteilleDeVin> */
+    // public function getVins(): Collection
+    // {
+    //     return $this->vins;
+    // }
 
     public function getRegion(): ?string
     {

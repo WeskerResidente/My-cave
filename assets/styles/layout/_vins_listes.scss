@@ -95,3 +95,14 @@
     text-align: center;
   }
 }
+.link-wine{
+  text-align: center;
+  color: v.$color-primary;
+  font-family: v.$font-family;
+  font-weight: v.$font-weight-bold;
+  a{
+    text-decoration: none;
+    color: v.$color-primary;
+
+  }
+}

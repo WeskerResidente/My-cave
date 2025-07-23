@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\BouteilleDeVinRepository;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
+use App\Entity\TypeDeVin;
 
 #[ORM\Entity(repositoryClass: BouteilleDeVinRepository::class)]
 class BouteilleDeVin
@@ -39,9 +40,10 @@ class BouteilleDeVin
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $dateModification;
 
-    #[ORM\ManyToOne(inversedBy: 'bouteilles')]
-    #[ORM\JoinColumn(nullable: false)]
-    private CaveAVin $cave;
+    #[ORM\ManyToOne(targetEntity: CaveAVin::class, inversedBy: 'bouteilles')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?CaveAVin $cave = null;
+
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -90,8 +92,16 @@ class BouteilleDeVin
     public function getDateAjout(): \DateTimeImmutable { return $this->dateAjout; }
     public function getDateModification(): \DateTimeImmutable { return $this->dateModification; }
 
-    public function getCave(): CaveAVin { return $this->cave; }
-    public function setCave(CaveAVin $cave): self { $this->cave = $cave; return $this; }
+    public function getCave(): ?CaveAVin
+    {
+        return $this->cave;
+    }
+
+    public function setCave(?CaveAVin $cave): self
+    {
+        $this->cave = $cave;
+        return $this;
+    }
 
     public function getCepage(): Cepage { return $this->cepage; }
     public function setCepage(Cepage $cepage): self { $this->cepage = $cepage; return $this; }
@@ -104,4 +114,19 @@ class BouteilleDeVin
 
     public function getAppelation(): Appelation { return $this->appelation; }
     public function setAppelation(Appelation $appelation): self { $this->appelation = $appelation; return $this; }
+
+    #[ORM\ManyToOne(inversedBy: 'bouteilles')]
+    #[ORM\JoinColumn(nullable: false)] 
+    private ?TypeDeVin $typeDeVin = null;
+
+    public function getTypeDeVin(): ?TypeDeVin
+    {
+        return $this->typeDeVin;
+    }
+
+    public function setTypeDeVin(?TypeDeVin $typeDeVin): self
+    {
+        $this->typeDeVin = $typeDeVin;
+        return $this;
+    }
 }

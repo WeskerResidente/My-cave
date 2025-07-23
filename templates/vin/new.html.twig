@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="add-wine-page">
+  <div class="add-wine-container">
+    <p class="info-message">
+      ATTENTION : Votre proposition sera soumise à vérification. L’administrateur se réserve le droit de la rejeter ou non.<br>
+      Pour toute réclamation, veuillez contacter le support.
+    </p>
+
+    <h1 class="form-title">Ajouter un vin</h1>
+
+    {{ form_start(form) }}
+
+    <div class="form-group">
+      {{ form_row(form.nom) }}
+      {{ form_row(form.pays) }}
+      {{ form_row(form.region) }}
+      {{ form_row(form.cepage) }}
+      {{ form_row(form.annee) }}
+      {{ form_row(form.prix) }}
+      {{ form_row(form.images) }}
+      {{ form_row(form.typeDeVin) }}
+      {{ form_row(form.appelation) }}
+      {{ form_row(form.description) }}
+    </div>
+
+    <div class="submit-button">
+      <button type="submit">Soumettre</button>
+    </div>
+
+    {{ form_end(form) }}
+  </div>
+</div>
+{% endblock %}

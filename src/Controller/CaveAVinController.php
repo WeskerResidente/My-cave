@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\CaveAVin;
+use App\Entity\BouteilleDeVin;
 use App\Form\CaveAVinTypeForm;
+use App\Form\BouteilleDeVinType;
+use App\Form\BouteilleDeVinTypeForm;
 use App\Repository\CaveAVinRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -82,15 +85,38 @@ final class CaveAVinController extends AbstractController
             'cave' => $cave,
         ]);
     }
-    #[Route('/cave/{id}/ajouter-vin', name: 'app_ajouter_vin')]
-    public function ajouterVin(CaveAVin $cave): Response
-    {
-        // Logique pour ajouter un vin dans cette cave
-        // Par exemple : afficher un formulaire de création de vin
-        return $this->render('vin/ajouter.html.twig', [
-            'cave' => $cave,
-        ]);
-    }
+
+        #[Route('/cave/{id}/ajouter-vin', name: 'app_cave_ajouter_vin')]
+        public function ajouterVinDansCave(Request $request, CaveAVin $cave, EntityManagerInterface $em): Response
+        {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+            if ($this->getUser() !== $cave->getCreePar()) {
+                throw $this->createAccessDeniedException("Vous ne pouvez pas ajouter de vin dans cette cave.");
+            }
+
+            $vin = new BouteilleDeVin();
+            $form = $this->createForm(BouteilleDeVinTypeForm::class, $vin);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $vin->setCreePar($this->getUser());
+                $vin->setCave($cave);
+
+                $em->persist($vin);
+                $em->flush();
+
+                $this->addFlash('success', 'Vin ajouté à la cave avec succès !');
+
+                return $this->redirectToRoute('app_cave_show', ['id' => $cave->getId()]);
+            }
+
+            return $this->render('vin/ajouter.html.twig', [
+                'form' => $form->createView(),
+                'cave' => $cave
+            ]);
+}
+
         #[Route('/cave/{id}/edit', name: 'app_cave_edit')]
     public function edit(Request $request, CaveAVin $cave, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
