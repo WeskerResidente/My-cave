@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="page-vin">
+  <h1 class="vin-title">{{ vin.nom|upper }}</h1>
+
+  <div class="vin-details">
+    <div class="vin-image">
+      <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
+    </div>
+
+    <div class="vin-info">
+      <p><strong>Année :</strong> {{ vin.annee }}</p>
+      <p><strong>Pays :</strong> {{ vin.pays.nom }}</p>
+      <p><strong>Région :</strong> {{ vin.region.nom }}</p>
+      <p><strong>Cépage :</strong> {{ vin.cepage.nom }}</p>
+      <p><strong>Type :</strong> {{ vin.typeDeVin.nom }}</p>
+      <p><strong>Prix :</strong> {{ vin.prix }} €</p>
+      <p><strong>Description :</strong> {{ vin.description }}</p>
+
+      <div class="note-stars">
+        <h3>Note sur ce vin</h3>
+
+        {% set moyenne = vin.getAverageNote() %}
+        {% if moyenne %}
+            {% set pleine = moyenne|round(0, 'floor') %}
+            {% set vide = 5 - pleine %}
+
+            <p>
+              <strong>{{ moyenne }}/5</strong>
+              {% for i in 1..pleine %}
+                  <span style="color: #88002D;">&#9733;</span>
+              {% endfor %}
+              {% for i in 1..vide %}
+                  <span style="color: #ccc;">&#9733;</span>
+              {% endfor %}
+            </p>
+        {% else %}
+            <p><em>Pas encore noté</em></p>
+        {% endif %}
+      </div>
+
+      {% if app.user %}
+      <h3>Noter ce vin</h3>
+
+      {{ form_start(formNote) }}
+
+      <div id="star-widget" class="star-widget" data-already-rated="{{ userHasRated ? 1 : 0 }}">
+        {% for i in 1..5 %}
+          <span class="star" data-value="{{ i }}">&#9733;</span>
+        {% endfor %}
+      </div>
+
+      {# Champ caché proprement généré #}
+      {{ form_widget(formNote.note, {
+          attr: {
+              id: 'notation_note_hidden'
+          }
+      }) }}
+
+
+      {{ form_end(formNote) }}
+    {% else %}
+      <p class="login-hint">🔒 <a href="{{ path('app_login') }}">Connectez-vous</a> pour noter ce vin.</p>
+    {% endif %}
+
+    </div>
+  </div>
+
+  <div class="vin-comments">
+    <h3>Commentaire</h3>
+    <ul>
+      {% for commentaire in vin.commentaires %}
+        <li>
+          <strong>
+            {% if commentaire.user %}
+              {{ commentaire.user.pseudo }}
+            {% else %}
+              Anonyme
+            {% endif %}
+          </strong> :
+          {{ commentaire.commentaire }}
+        </li>
+      {% else %}
+        <li>Aucun commentaire.</li>
+      {% endfor %}
+    </ul> 
+
+    {% if app.user %}
+      <h3>Ajouter un commentaire</h3>
+      {{ form_start(form) }}
+        {{ form_row(form.commentaire, {'attr': {'placeholder': 'Laissez votre commentaire…', 'class': 'input-commentaire'}}) }}
+        <button class="btn-submit">Poster</button>
+      {{ form_end(form) }}
+    {% else %}
+      <p class="login-hint">🔒 <a href="{{ path('app_login') }}">Connectez-vous</a> pour laisser un commentaire.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

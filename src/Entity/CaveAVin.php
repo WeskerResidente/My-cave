@@ -148,7 +148,7 @@ class CaveAVin
     // #[ORM\OneToMany(mappedBy: 'cave', targetEntity: BouteilleDeVin::class, orphanRemoval: true)]
     // private Collection $vins;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $region = null;
     #[ORM\Column(type: 'text', nullable: true)]
     #[Assert\Length(
@@ -183,5 +183,17 @@ class CaveAVin
 
         return $this;
     }
-    
+    #[ORM\Column(type: 'boolean')]
+    private bool $isPrivee = false;
+
+    public function isPrivee(): bool
+    {
+        return $this->isPrivee;
+    }
+
+    public function setIsPrivee(bool $isPrivee): self
+    {
+        $this->isPrivee = $isPrivee;
+        return $this;
+    }
 }

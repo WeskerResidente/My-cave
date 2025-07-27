@@ -1,0 +1,14 @@
+@use '../base/variables' as v;    
+    
+    .btn-flip {
+      background-color: v.$color-accent;
+      color: white;
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: v.$radius-pill;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      &:hover {
+        background-color: darken(v.$color-accent, 10%);
+      }
+    }

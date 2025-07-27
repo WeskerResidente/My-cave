@@ -7,7 +7,7 @@
   <form method="get" class="filters-bar">
     <div class="search-input">
       <i class="fa fa-search"></i>
-      <input type="text" name="q" placeholder="Vin..." value="{{ app.request.get('q') }}">
+      <input type="text" name="q" placeholder="Chercher votre vin..." value="{{ app.request.get('q') }}">
     </div>
 
     <select name="region">
@@ -47,7 +47,7 @@
       <output>{{ app.request.get('prix_max') ?? '1000€' }}</output>
     </div>
 
-    <button type="submit">Filtrer</button>
+    <button type="submit" class="btn-primary">Filtrer</button>
   </form>
 
   <div class="vins-grid">
@@ -61,20 +61,29 @@
           <p><strong>Cépage :</strong> {{ vin.cepage.nom }}</p>
           <p><strong>Type :</strong> {{ vin.typeDeVin.nom }}</p>
           <p><strong>{{ vin.prix }} €</strong></p>
-          <button class="btn-flip">Ajouter à une cave</button>
+          <a href="{{ path('vin_show', {'id': vin.id}) }}" class="btn-flip">En savoir plus</a>
         </div>
-
+        {% if app.user %}
         <div class="vin-card-back">
           <form method="post" action="{{ path('app_ajouter_vin_a_cave', {'vinId': vin.id}) }}">
             <label for="cave-select-{{ vin.id }}">Choisir une cave :</label>
-            <select name="cave_id" id="cave-select-{{ vin.id }}">
-              {% for cave in caves %}
-                <option value="{{ cave.id }}">{{ cave.nom }}</option>
-              {% endfor %}
-            </select>
-            <button type="submit">Ajouter</button>
+            <div class="select-button-group">
+              <select name="cave_id" id="cave-select-{{ vin.id }}">
+                {% for cave in caves %}
+                  <option value="{{ cave.id }}">{{ cave.nom }}</option>
+                {% endfor %}
+              </select>
+              <button type="submit"  class="btn-primary">Ajouter</button>
+            </div>
+            {% if app.user %}
+              <form method="post" action="{{ path('app_ajouter_vin_a_ma_cave', {'vinId': vin.id}) }}">
+                <button type="submit" class="btn-primary">Ajouter à ma cave</button>
+              </form>
+            {% endif %}
+
           </form>
         </div>
+        {% endif %}
       </div>
     {% else %}
       <p>Aucun vin trouvé.</p>
@@ -82,7 +91,7 @@
   </div>
 
   <div>
-    <p class="link-wine">Vous ne trouvez pas votre vin ? <a href="{{ path('vin_new') }}">Rajoutez-le ici !</a></p>
+    <p class="link-wine">Vous ne trouvez pas votre vin ? <a href="{{ path('app_vin_new') }}">Rajoutez-le ici !</a></p>
   </div>
   <div class="pagination">
     {{ knp_pagination_render(vins) }}

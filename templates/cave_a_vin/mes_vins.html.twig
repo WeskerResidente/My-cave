@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ma Cave Personnelle{% endblock %}
+
+{% block body %}
+  <section class="cave-detail">
+    <p><strong>Prix moyen :</strong> {{ prixMoyen|number_format(2, '.', ',') }} €</p>
+
+    {% if vins|length > 0 %}
+      <div class="wine-list">
+        {% for vin in vins %}
+          <div class="wine-card">
+            <div class="flip-card">
+              <div class="flip-card-inner">
+                <div class="flip-card-front">
+                  <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
+                </div>
+                <div class="flip-card-back">
+                  <p><strong>{{ vin.prix }} €</strong></p>
+                  <a href="{{ path('vin_show', {'id': vin.id}) }}" class="btn-flip">Détails</a>
+                </div>
+              </div>
+            </div>
+            <form method="post" action="{{ path('retirer_vin_de_cave', {'vinId': vin.id, 'caveId': cave.id}) }}">
+              <button class="btn-remove" data-vin="{{ vin.id }}" data-nom="{{ vin.nom }}">❌ Retirer</button>
+            </form>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Aucun vin dans votre cave personnelle.</p>
+      <a href="{{ path('app_vin_listes', { cave: cave.id }) }}" class="btn-primary">Ajouter un vin</a>
+    {% endif %}
+  </section>
+{% endblock %}

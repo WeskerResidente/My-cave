@@ -2,11 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\BouteilleDeVinRepository;
-use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
+use App\Entity\Notation;
 use App\Entity\TypeDeVin;
-
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use App\Repository\BouteilleDeVinRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\CommentaireDeVin;
 #[ORM\Entity(repositoryClass: BouteilleDeVinRepository::class)]
 class BouteilleDeVin
 {
@@ -61,10 +64,20 @@ class BouteilleDeVin
     #[ORM\JoinColumn(nullable: false)]
     private Appelation $appelation;
 
+    #[ORM\OneToMany(mappedBy: 'vin', targetEntity: Notation::class, orphanRemoval: true)]
+    private Collection $notations;
+
+    #[ORM\OneToMany(mappedBy: 'vin', targetEntity: Commentaire::class, orphanRemoval: true)]
+    private Collection $commentaires;
+
     public function __construct()
     {
         $this->dateAjout = new \DateTimeImmutable();
         $this->dateModification = new \DateTimeImmutable();
+        $this->dateAjout = new \DateTimeImmutable();
+        $this->dateModification = new \DateTimeImmutable();
+        $this->notations = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
     }
 
     // Getters & Setters
@@ -129,4 +142,27 @@ class BouteilleDeVin
         $this->typeDeVin = $typeDeVin;
         return $this;
     }
+    public function getNotations(): Collection
+    {
+        return $this->notations;
+    }
+
+    public function getAverageNote(): ?float
+    {
+        if ($this->notations->isEmpty()) {
+            return null;
+        }
+
+        $total = 0;
+        foreach ($this->notations as $notation) {
+            $total += $notation->getNote();
+        }
+
+        return round($total / count($this->notations), 1);
+    }
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
 }

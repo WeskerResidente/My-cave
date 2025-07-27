@@ -28,6 +28,9 @@
                     <a href="{{ path('app_liste_caves')}}">Toutes les caves</a>
                     <a href="{{ path('app_cave_a_vin') }}">My cave</a>
                     <a href="">Contact</a>
+                    {% if app.user %}
+                        <li><a href="{{ path('app_mes_vins') }}">🍷 Mes Vins</a></li>
+                    {% endif %}
                 </nav>
 
             <div class="auth-links">
@@ -43,7 +46,15 @@
             </div>
             </nav>
         {% endblock %}
-            {% block body %}{% endblock %}
+            {% block body %}
+                        {% for label, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="flash-message {{ label }}">
+                            {{ message }}
+                            </div>
+                        {% endfor %}
+            {% endfor %}
+{% endblock %}
         {% block footer %}
             <footer class="site-footer">
                     <div class="footer-links">

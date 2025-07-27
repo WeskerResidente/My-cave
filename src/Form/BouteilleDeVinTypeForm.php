@@ -35,7 +35,9 @@ class BouteilleDeVinTypeForm extends AbstractType
             ->add('region', EntityType::class, [
                 'class' => Region::class,
                 'choice_label' => 'nom',
-                'label' => 'Région'
+                'label' => 'Région',
+                'placeholder' => 'Sélectionnez une région',
+                'required' => true,
             ])
             ->add('cepage', EntityType::class, [
                 'class' => Cepage::class,
@@ -81,12 +83,5 @@ class BouteilleDeVinTypeForm extends AbstractType
                 'required' => false,
             ])
         ;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): void
-    {
-        $resolver->setDefaults([
-            'data_class' => BouteilleDeVin::class,
-        ]);
     }
 }

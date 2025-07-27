@@ -45,7 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'creePar', targetEntity: BouteilleDeVin::class)]
     private Collection $bouteillesCreees;
 
-    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: CommentaireDeVin::class)]
+    #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: Commentaire::class)]
     private Collection $commentaires;
 
     #[ORM\OneToMany(mappedBy: 'utilisateur', targetEntity: NoteDeVin::class)]

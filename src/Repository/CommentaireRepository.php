@@ -2,29 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\CaveAVin;
+use App\Entity\Commentaire;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CaveAVin>
+ * @extends ServiceEntityRepository<Commentaire>
  */
-class CaveAVinRepository extends ServiceEntityRepository
+class CommentaireRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CaveAVin::class);
+        parent::__construct($registry, Commentaire::class);
     }
-    public function findCavesPubliques(): array
-    {
-        return $this->createQueryBuilder('c')
-            ->where('c.isPrivee = false')
-            ->orderBy('c.dateAjout', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
+
     //    /**
-    //     * @return CaveAVin[] Returns an array of CaveAVin objects
+    //     * @return Commentaire[] Returns an array of Commentaire objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -38,7 +31,7 @@ class CaveAVinRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?CaveAVin
+    //    public function findOneBySomeField($value): ?Commentaire
     //    {
     //        return $this->createQueryBuilder('c')
     //            ->andWhere('c.exampleField = :val')

@@ -9,6 +9,7 @@
     font-size: 2.2rem;
     margin-bottom: 2rem;
     font-weight: bold;
+    color: v.$color-primary;
   }
 
   .filters-bar {
@@ -18,32 +19,56 @@
     justify-content: center;
     margin-bottom: 2rem;
 
-    input, select {
+    input,
+    select {
       padding: 0.5rem 1rem;
       border-radius: v.$radius-pill;
       border: none;
+      font-size: 1rem;
       background-color: v.$color-accent;
       color: white;
-      font-size: 1rem;
+      appearance: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1rem;
+      padding-right: 2.5rem;
+
+      &:hover,
+      &:focus {
+        background-color: darken(v.$color-accent, 10%);
+        outline: 2px solid lighten(v.$color-accent, 15%);
+      }
 
       &::placeholder {
         color: rgba(255, 255, 255, 0.7);
       }
+
+      option {
+        background-color: v.$color-accent;
+        color: white;
+      }
     }
 
     button {
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 1.2rem;
       background-color: v.$color-primary;
       border-radius: v.$radius-pill;
       color: white;
       border: none;
       cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: background-color 0.2s ease;
 
       &:hover {
         background-color: darken(v.$color-primary, 10%);
       }
     }
 
+
+  }
     .prix-slider {
       display: flex;
       align-items: center;
@@ -55,26 +80,34 @@
 
       output {
         font-weight: bold;
+        color: v.$color-primary;
+      }
+
+      label {
+        font-weight: bold;
+        color: v.$color-secondary;
       }
     }
-  }
-
   .vins-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 2rem;
 
     .vin-card {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.85);
       padding: 1rem;
       border-radius: v.$radius-xl;
       text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 250px; // ← ajustable à ton layout
+      margin: auto;
+      overflow: hidden; 
 
       img {
-        width: 100px;
-        height: auto;
-        margin-bottom: 1rem;
+        width: 100%;
+        height: 180px;
+        object-fit: contain;
+        margin-bottom: 0.5rem;
       }
 
       h3 {
@@ -87,6 +120,65 @@
         font-size: 0.9rem;
         margin: 0;
       }
+      .vin-card-front{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .btn-flip{
+          margin-top: 1rem;
+        }
+      }
+      .vin-card-back {
+        margin-top: 1rem;
+
+        form {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          label {
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+          }
+
+          .select-button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.5rem;
+
+            select {
+              flex: 1;
+              padding: 0.5rem 1rem;
+              font-size: 1rem;
+              border-radius: v.$radius-pill;
+              border: none;
+              background-color: v.$color-accent;
+              color: white;
+              appearance: none;
+              background-repeat: no-repeat;
+              background-position: right 1rem center;
+              background-size: 1rem;
+              padding-right: 2.5rem;
+                          cursor: pointer;
+              &:hover,
+              &:focus {
+                background-color: darken(v.$color-accent, 10%);
+                outline: 2px solid lighten(v.$color-accent, 15%);
+
+              }
+
+              option {
+                background-color: v.$color-accent;
+                color: white;
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -95,14 +187,39 @@
     text-align: center;
   }
 }
-.link-wine{
+
+.link-wine {
   text-align: center;
   color: v.$color-primary;
-  font-family: v.$font-family;
-  font-weight: v.$font-weight-bold;
-  a{
+  font-weight: bold;
+
+  a {
     text-decoration: none;
     color: v.$color-primary;
 
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.btn-primary {
+  background-color: v.$color-primary;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: v.$radius-pill;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: darken(v.$color-primary, 10%);
+  }
+
+  &:focus {
+    outline: 2px solid lighten(v.$color-primary, 20%);
+    outline-offset: 2px;
   }
 }

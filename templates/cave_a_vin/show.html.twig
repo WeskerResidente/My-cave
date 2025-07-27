@@ -6,12 +6,15 @@
   {% set isOwner = app.user and app.user == cave.creePar %}
 
   <section class="cave-detail">
-    <div class="cave-header">
-      <h1 id="cave-name" contenteditable="false">{{ cave.nom }}</h1>
-      {% if isOwner %}
+  <div class="cave-header">
+    <h1 id="cave-name" contenteditable="false">{{ cave.nom }}</h1>
+
+    {% if isOwner %}
+      <div class="btn-edit-wrapper">
         <button id="edit-name-btn" class="btn-edit small">✏️ Modifier le nom</button>
-      {% endif %}
-    </div>
+      </div>
+    {% endif %}
+  </div>
 
     <div class="description-image-container">
       <div class="image-wrapper">
@@ -41,6 +44,13 @@
           </a>
           </div>
         {% endif %}
+        {% if isOwner %}
+            <a href="#" class="btn-delete-cave" id="open-delete-modal">
+              🗑️ Supprimer cette cave
+            </a>
+            <form method="post" action="{{ path('app_cave_supprimer', { id: cave.id }) }}" id="delete-cave-form">
+            </form>
+        {% endif %}
 
         {% if cave.bouteilles is not empty %}
             {% set total = 0 %}
@@ -52,18 +62,33 @@
           </div>
         </div>
               {% if cave.bouteilles|length > 0 %}
-          <div class="wine-list">
-            {% for vin in cave.bouteilles %}
-              <div class="wine-card">
-                <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
-                <h3>{{ vin.nom }}</h3>
-                <p>{{ vin.annee }} - {{ vin.pays.nom }}</p>
-                <p>{{ vin.region.nom }}</p>
-                <p><strong>{{ vin.prix }} €</strong></p>
-                <button class="btn-remove" data-vin="{{ vin.id }}" data-nom="{{ vin.nom }}">❌ Retirer</button>
+        <div class="wine-list">
+          {% for vin in cave.bouteilles %}
+            <div class="wine-card">
+              <div class="flip-card" onclick="this.classList.toggle('flipped')">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <h3>{{ vin.nom|upper }}</h3>
+                    <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
+                        {% if app.user and cave.utilisateur.id == app.user.id %}
+                          <form method="post" action="{{ path('retirer_vin_de_cave', {'vinId': vin.id, 'caveId': cave.id}) }}">
+                            <button class="btn-remove" data-vin="{{ vin.id }}" data-nom="{{ vin.nom }}">❌ Retirer</button>
+                          </form>
+                        {% endif %}
+                  </div>
+                  <div class="flip-card-back">
+                    <p>Année : {{ vin.annee }}</p>
+                    <p>Pays : {{ vin.pays.nom }}</p>
+                    <p>Région : {{ vin.region.nom }}</p>
+                    <p>Cépage : {{ vin.cepage.nom }}</p>
+                    <a href="{{ path('vin_show', {'id': vin.id}) }}" class="btn-flip">En savoir plus</a>
+                  </div>
+                </div>
               </div>
-            {% endfor %}
-          </div>
+            </div>
+          {% endfor %}
+        </div>
+
         {% else %}
           <div class="wine-list">
             <div class="wine-card empty" onclick="window.location.href='{{ path('app_vin_listes', { cave: cave.id }) }}'">
@@ -78,28 +103,48 @@
   <div id="confirmModal" class="modal" style="display:none;">
     <div class="modal-content">
       <p>Êtes-vous sûr de vouloir retirer <strong id="vinName"></strong> de cette cave ?</p>
-        <form method="post" id="removeForm" action="{{ path('app_retirer_vin', { caveId: cave.id }) }}">
+      <form method="post" id="removeForm" action="{{ path('app_retirer_vin', { caveId: cave.id }) }}">
         <input type="hidden" name="vin_id" id="vinIdInput">
         <button type="submit" class="confirm-btn">Oui, retirer</button>
         <button type="button" class="cancel-btn">Annuler</button>
       </form>
     </div>
   </div>
-
+  <div id="deleteCaveModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <p>Êtes-vous sûr de vouloir <strong>supprimer définitivement</strong> cette cave ?</p>
+      <div class="modal-buttons">
+        <button type="submit" form="delete-cave-form" class="confirm-btn">Oui, supprimer</button>
+        <button type="button" class="cancel-btn cancel-delete-cave">Annuler</button>
+      </div>
+    </div>
+  </div>
   <script>
-    document.querySelectorAll('.btn-remove').forEach(button => {
-      button.addEventListener('click', () => {
-        const vinId = button.dataset.vin;
-        const vinNom = button.dataset.nom;
-        document.getElementById('vinIdInput').value = vinId;
-        document.getElementById('vinName').textContent = vinNom;
-        document.getElementById('confirmModal').style.display = 'block';
-      });
-    });
+      document.querySelectorAll('.btn-remove').forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
 
-    document.querySelector('.cancel-btn')?.addEventListener('click', () => {
-      document.getElementById('confirmModal').style.display = 'none';
-    });
+          const vinId = button.dataset.vin;
+          const vinNom = button.dataset.nom;
+          const caveId = '{{ cave.id }}';
+
+          // Mise à jour de la modal
+          document.getElementById('vinIdInput').value = vinId;
+          document.getElementById('vinName').textContent = vinNom;
+
+          // Mise à jour de l'URL du formulaire dans la modal
+          const form = document.getElementById('removeForm');
+          form.action = `/cave/${caveId}/retirer-vin/${vinId}`;
+
+          document.getElementById('confirmModal').style.display = 'flex';
+        });
+      });
+
+      // Gestion du bouton "Annuler"
+      document.querySelector('#confirmModal .cancel-btn')?.addEventListener('click', () => {
+        document.getElementById('confirmModal').style.display = 'none';
+      });
+
   </script>
 
   {% if isOwner %}

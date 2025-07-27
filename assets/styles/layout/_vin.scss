@@ -1,0 +1,170 @@
+@use '../base/variables' as v;
+
+.page-vin {
+  background-size: cover;
+  padding: 2rem;
+  border-radius: 12px;
+  color: #2e2e2e;
+
+  .vin-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: bold;
+  }
+
+  .vin-details {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    .vin-image img {
+      max-width: 200px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .vin-info {
+      max-width: 600px;
+
+      p {
+        margin-bottom: 0.5rem;
+      }
+
+      .note-stars {
+        margin-top: 1rem;
+        color: v.$color-primary;
+        span {
+          font-size: 1.5rem;
+        }
+      }
+
+    #star-widget {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 2rem;
+      user-select: none;
+      cursor: pointer;
+            color: v.$color-primary;
+    }
+
+    #star-widget .star {
+            color: v.$color-primary;
+      transition: color 0.3s ease;
+    }
+
+    #star-widget .star:hover {
+      color: v.$color-primary;
+    }
+    }
+  }
+
+  .vin-comments {
+    margin-top: 3rem;
+
+    ul {
+      padding-left: 1rem;
+      margin-bottom: 1rem;
+
+      li {
+        margin-bottom: 0.75rem;
+        background: rgba(255,255,255,0.8);
+        padding: 0.75rem;
+        border-radius: 6px;
+      }
+    }
+
+    .input-commentaire {
+      width: 100%;
+      border-radius: 8px;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      min-height: 100px;
+      resize: vertical;
+      background: #fff;
+    }
+
+    .btn-submit {
+      background-color: #a5589c;
+      color: white;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      cursor: pointer;
+      transition: background 0.3s;
+
+      &:hover {
+        background-color: #923e87;
+      }
+    }
+
+    .login-hint {
+      margin-top: 1rem;
+      font-style: italic;
+    }
+  }
+}
+
+.flip-card {
+  background-color: transparent;
+  width: 220px;
+  height: 280px;
+  perspective: 1000px;
+  margin: 1rem auto;
+  cursor: pointer;
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+  }
+
+  &.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: v.$radius-xl;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    text-align: center;
+
+
+  }
+
+  .flip-card-front {
+    background-color: rgba(255, 255, 255, 0.85);
+    color: black;
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .flip-card-back {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: rotateY(180deg);
+
+    img {
+      max-height: 100px;
+      margin-bottom: 1rem;
+    }
+
+
+  }
+}
