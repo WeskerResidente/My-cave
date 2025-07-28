@@ -1,0 +1,36 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block page_title %}Vins à valider{% endblock %}
+
+{% block content %}
+    <h1>Vins à valider</h1>
+
+    <div class="wine-validation-list">
+        {% for vin in vins %}
+            <div class="wine-card">
+                <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
+                <div class="wine-info">
+                    <h2>{{ vin.nom }}</h2>
+                    <p><strong>Pays :</strong> {{ vin.pays.nom }}</p>
+                    <p><strong>Région :</strong> {{ vin.region.nom }}</p>
+                    <p><strong>Cépage :</strong> {{ vin.cepage.nom }}</p>
+                    <p><strong>Année :</strong> {{ vin.annee }}</p>
+                    <p><strong>Type :</strong> {{ vin.typeDeVin.nom }}</p>
+                    <p><strong>Appellation :</strong> {{ vin.appelation.nom }}</p>
+                    <p><strong>Prix :</strong> {{ vin.prix }} €</p>
+                    <p><strong>Description :</strong> {{ vin.description }}</p>
+
+                    <a href="{{ urls[vin.id] }}" class="btn btn-success">
+                        ✅ Valider ce vin
+                    </a>
+                    
+                    <a href="{{ path('admin_refuser_vin', {id: vin.id}) }}" class="btn btn-danger" onclick="return confirm('Supprimer ce vin ?');">
+                        ❌ Refuser
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucun vin en attente de validation.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -15,7 +15,14 @@ class BouteilleDeVinRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, BouteilleDeVin::class);
     }
-
+    public function findValidVins(): array
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.isValide = :true')
+            ->setParameter('true', true)
+            ->getQuery()
+            ->getResult();
+    }
     //    /**
     //     * @return BouteilleDeVin[] Returns an array of BouteilleDeVin objects
     //     */

@@ -14,6 +14,9 @@
               <div class="flip-card-inner">
                 <div class="flip-card-front">
                   <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
+                      <form method="post" action="{{ path('retirer_vin_de_cave', {'vinId': vin.id, 'caveId': cave.id}) }}">
+                        <button class="btn-remove" data-vin="{{ vin.id }}" data-nom="{{ vin.nom }}">❌ Retirer</button>
+                    </form>
                 </div>
                 <div class="flip-card-back">
                   <p><strong>{{ vin.prix }} €</strong></p>
@@ -21,9 +24,6 @@
                 </div>
               </div>
             </div>
-            <form method="post" action="{{ path('retirer_vin_de_cave', {'vinId': vin.id, 'caveId': cave.id}) }}">
-              <button class="btn-remove" data-vin="{{ vin.id }}" data-nom="{{ vin.nom }}">❌ Retirer</button>
-            </form>
           </div>
         {% endfor %}
       </div>

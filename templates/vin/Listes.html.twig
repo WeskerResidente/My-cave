@@ -75,11 +75,6 @@
               </select>
               <button type="submit"  class="btn-primary">Ajouter</button>
             </div>
-            {% if app.user %}
-              <form method="post" action="{{ path('app_ajouter_vin_a_ma_cave', {'vinId': vin.id}) }}">
-                <button type="submit" class="btn-primary">Ajouter à ma cave</button>
-              </form>
-            {% endif %}
 
           </form>
         </div>

@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Validator\Constraints\Length;
-
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 class CaveAVinTypeForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -45,7 +45,12 @@ class CaveAVinTypeForm extends AbstractType
                         ])
                     ],
                 ])
+                ->add('isPrivee', CheckboxType::class, [
+                'label' => 'Cave privée (visible uniquement par vous)',
+                'required' => false,
+            ])
             ;
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void

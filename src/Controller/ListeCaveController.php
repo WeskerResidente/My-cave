@@ -25,7 +25,9 @@ class ListeCaveController extends AbstractController
         PaginatorInterface $paginator
     ): Response {
         $queryBuilder = $caveRepo->createQueryBuilder('c');
-
+        $user = $this->getUser();
+        $queryBuilder->andWhere('c.isPrivee = false OR c.utilisateur = :user')
+                    ->setParameter('user', $user);
         // Recherche par nom (champ texte "q")
         $q = $request->query->get('q');
         if (!empty($q)) {

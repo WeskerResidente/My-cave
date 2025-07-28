@@ -9,11 +9,12 @@
   <div class="cave-header">
     <h1 id="cave-name" contenteditable="false">{{ cave.nom }}</h1>
 
-    {% if isOwner %}
-      <div class="btn-edit-wrapper">
-        <button id="edit-name-btn" class="btn-edit small">✏️ Modifier le nom</button>
-      </div>
-    {% endif %}
+  {% if isOwner and not cave.isPrivee %}
+    <div class="btn-edit-wrapper">
+      <button id="edit-name-btn" class="btn-edit small">✏️ Modifier le nom</button>
+    </div>
+  {% endif %}
+
   </div>
 
     <div class="description-image-container">
@@ -44,12 +45,17 @@
           </a>
           </div>
         {% endif %}
-        {% if isOwner %}
-            <a href="#" class="btn-delete-cave" id="open-delete-modal">
-              🗑️ Supprimer cette cave
-            </a>
-            <form method="post" action="{{ path('app_cave_supprimer', { id: cave.id }) }}" id="delete-cave-form">
-            </form>
+        
+          {% if isOwner and not cave.isPrivee %}
+          <a href="#" class="btn-delete-cave open-delete-modal">
+            🗑️ Supprimer cette cave
+          </a>
+          <form id="delete-cave-form"
+                method="POST"
+                action="{{ path('app_cave_supprimer', { id: cave.id }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete-cave-' ~ cave.id) }}">
+          </form>
+
         {% endif %}
 
         {% if cave.bouteilles is not empty %}
@@ -61,6 +67,7 @@
           {% endif %}
           </div>
         </div>
+        
               {% if cave.bouteilles|length > 0 %}
         <div class="wine-list">
           {% for vin in cave.bouteilles %}
@@ -70,11 +77,14 @@
                   <div class="flip-card-front">
                     <h3>{{ vin.nom|upper }}</h3>
                     <img src="{{ asset('uploads/vins/' ~ vin.images) }}" alt="{{ vin.nom }}">
-                        {% if app.user and cave.utilisateur.id == app.user.id %}
-                          <form method="post" action="{{ path('retirer_vin_de_cave', {'vinId': vin.id, 'caveId': cave.id}) }}">
-                            <button class="btn-remove" data-vin="{{ vin.id }}" data-nom="{{ vin.nom }}">❌ Retirer</button>
-                          </form>
-                        {% endif %}
+                          {% if app.user and cave.utilisateur.id == app.user.id %}
+                            <button type="button"
+                                    class="btn-remove"
+                                    data-vin="{{ vin.id }}"
+                                    data-nom="{{ vin.nom }}">
+                              ❌ Retirer
+                            </button>
+                          {% endif %}
                   </div>
                   <div class="flip-card-back">
                     <p>Année : {{ vin.annee }}</p>
@@ -92,12 +102,24 @@
         {% else %}
           <div class="wine-list">
             <div class="wine-card empty" onclick="window.location.href='{{ path('app_vin_listes', { cave: cave.id }) }}'">
-              <img src="{{ asset('images/add-icon.png') }}" alt="Ajouter un vin">
-              <p>Ajouter un vin</p>
+              <img src="{{ asset('images/add-vin-placeholder.png') }}" alt="Ajouter un vin">
+              <p class="btn-edit small">Ajouter un vin</p>
             </div>
           </div>
         {% endif %}
-
+                <form method="POST"
+                action="{{ path('app_toggle_visibilite_cave', { id: cave.id }) }}"
+                class="form-toggle-privee">
+            <input type="hidden" name="_token" value="{{ csrf_token('toggle-cave-' ~ cave.id) }}">
+              <button type="submit" class="btn-toggle-privee">
+                {% if cave.isPrivee %}
+                  🔓 Rendre la cave publique
+                {% else %}
+                  🔒 Rendre la cave privée
+                {% endif %}
+              </button>
+          </form>
+        </div>
   </section>
 
   <div id="confirmModal" class="modal" style="display:none;">
@@ -119,6 +141,7 @@
       </div>
     </div>
   </div>
+  
   <script>
       document.querySelectorAll('.btn-remove').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -131,6 +154,8 @@
           // Mise à jour de la modal
           document.getElementById('vinIdInput').value = vinId;
           document.getElementById('vinName').textContent = vinNom;
+          // Mise à jour de l'URL d'action du formulaire
+          document.getElementById('removeForm').action = `/cave/${caveId}/retirer-vin/${vinId}`;
 
           // Mise à jour de l'URL du formulaire dans la modal
           const form = document.getElementById('removeForm');
@@ -144,7 +169,16 @@
       document.querySelector('#confirmModal .cancel-btn')?.addEventListener('click', () => {
         document.getElementById('confirmModal').style.display = 'none';
       });
+    // Ouvre la modale de suppression de la cave
+  document.querySelector('.open-delete-modal')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('deleteCaveModal').style.display = 'flex';
+  });
 
+  // Ferme la modale si on clique sur "Annuler"
+  document.querySelector('.cancel-delete-cave')?.addEventListener('click', () => {
+    document.getElementById('deleteCaveModal').style.display = 'none';
+  });
   </script>
 
   {% if isOwner %}

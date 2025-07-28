@@ -44,9 +44,8 @@ class BouteilleDeVin
     private \DateTimeImmutable $dateModification;
 
     #[ORM\ManyToOne(targetEntity: CaveAVin::class, inversedBy: 'bouteilles')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?CaveAVin $cave = null;
-
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -163,6 +162,19 @@ class BouteilleDeVin
     public function getCommentaires(): Collection
     {
         return $this->commentaires;
+    }
+    #[ORM\Column(type: 'boolean')]
+    private bool $isValide = false;
+
+    public function isValide(): bool
+    {
+        return $this->isValide;
+    }
+
+    public function setIsValide(bool $isValide): self
+    {
+        $this->isValide = $isValide;
+        return $this;
     }
 
 }

@@ -32,8 +32,8 @@ class VinController extends AbstractController
             ->leftJoin('v.pays', 'p')
             ->leftJoin('v.cepage', 'c')
             ->leftJoin('v.typeDeVin', 't')
-            ->addSelect('r', 'p', 'c', 't');
-
+            ->addSelect('r', 'p', 'c', 't')
+            ->where('v.isValide = true');
         if ($q = $request->query->get('q')) {
             $query->andWhere('v.nom LIKE :q')->setParameter('q', '%' . $q . '%');
         }

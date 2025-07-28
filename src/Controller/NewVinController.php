@@ -73,7 +73,8 @@ class NewVinController extends AbstractController
             }
 
             $vin->setCreePar($this->getUser());
-
+            $vin->setIsValide(false);
+            
             $em->persist($vin);
             $em->flush();
 

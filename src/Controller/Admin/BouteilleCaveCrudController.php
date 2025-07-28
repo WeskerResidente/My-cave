@@ -14,7 +14,6 @@ class BouteilleCaveCrudController extends AbstractCrudController
     {
         return BouteilleCave::class;
     }
-
     /*
     public function configureFields(string $pageName): iterable
     {

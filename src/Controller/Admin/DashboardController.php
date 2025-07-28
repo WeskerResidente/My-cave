@@ -2,49 +2,92 @@
 
 namespace App\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use App\Entity\User;
+use App\Entity\CaveAVin;
+use App\Entity\NoteDeVin;
+use App\Entity\Commentaire;
+use App\Entity\BouteilleCave;
+use App\Entity\BouteilleDeVin;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\BouteilleDeVinRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
-#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+    #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        return parent::index();
+        // Redirige vers une section par défaut (par exemple les utilisateurs)
+        $routeBuilder = $this->container->get(AdminUrlGenerator::class);
 
-        // Option 1. You can make your dashboard redirect to some common page of your backend
-        //
-        // 1.1) If you have enabled the "pretty URLs" feature:
-        // return $this->redirectToRoute('admin_user_index');
-        //
-        // 1.2) Same example but using the "ugly URLs" that were used in previous EasyAdmin versions:
-        // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        // return $this->redirect($adminUrlGenerator->setController(OneOfYourCrudController::class)->generateUrl());
-
-        // Option 2. You can make your dashboard redirect to different pages depending on the user
-        //
-        // if ('jane' === $this->getUser()->getUsername()) {
-        //     return $this->redirectToRoute('...');
-        // }
-
-        // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
-        // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
-        //
-        // return $this->render('some/path/my-dashboard.html.twig');
+        return $this->redirect($routeBuilder->setController(UserCrudController::class)->generateUrl());
     }
 
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('My Cave');
+            ->setTitle('Panneau d\'administration');
     }
 
     public function configureMenuItems(): iterable
     {
-        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
-        // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
-    }
+        yield MenuItem::linkToDashboard('Accueil Admin', 'fa fa-home');
+
+        yield MenuItem::section('Utilisateurs');
+        yield MenuItem::linkToCrud('Utilisateurs', 'fas fa-users', User::class);
+
+        yield MenuItem::section('Caves à vin');
+        yield MenuItem::linkToCrud('Caves', 'fas fa-warehouse', CaveAVin::class);
+        yield MenuItem::linkToCrud('Bouteilles dans les caves', 'fas fa-boxes', BouteilleCave::class);
+
+        yield MenuItem::section('Vins');
+        yield MenuItem::linkToCrud('Vins', 'fas fa-wine-bottle', BouteilleDeVin::class);
+        yield MenuItem::linkToCrud('Notes de vin', 'fas fa-star', NoteDeVin::class);
+        yield MenuItem::linkToCrud('Commentaires', 'fas fa-comments', Commentaire::class);
+        yield MenuItem::section('Modération');
+        yield MenuItem::linkToRoute('Vins à valider', 'fa fa-wine-glass', 'admin_vins_a_valider');
+        // yield MenuItem::section('MODÉRATION');
+        // yield MenuItem::linkToCrud('Vins à valider', 'fas fa-key', BouteilleDeVin::class)
+        //     ->setController(VinModerationCrudController::class);
+        // MenuItem::linkToCrud('Vins à valider', 'fa fa-wine-glass', BouteilleDeVin::class)
+        // ->setController(VinModerationCrudController::class)
+        // ->setPermission('ROLE_ADMIN');
+        }
+        #[Route('/admin/vins-a-valider', name: 'admin_vins_a_valider')]
+        public function vinsAValider(
+            AdminUrlGenerator $urlGenerator,
+            BouteilleDeVinRepository $repo
+        ): Response {
+            $vins = $repo->findBy(['isValide' => false]);
+
+            $urls = [];
+            foreach ($vins as $vin) {
+                $urls[$vin->getId()] = $urlGenerator
+                    ->setController(VinModerationCrudController::class)
+                    ->setAction('valider')
+                    ->setEntityId($vin->getId())
+                    ->generateUrl();
+            }
+
+            return $this->render('admin/vins_a_valider.html.twig', [
+                'vins' => $vins,
+                'urls' => $urls,
+            ]);
+        }
+        #[Route('/admin/vin/{id}/refuser', name: 'admin_refuser_vin')]
+        public function refuserVin(BouteilleDeVin $vin, EntityManagerInterface $em): RedirectResponse
+        {
+            $em->remove($vin);
+            $em->flush();
+
+            $this->addFlash('danger', 'Le vin a été refusé et supprimé.');
+            return $this->redirectToRoute('admin_vins_a_valider');
+        }
 }
+

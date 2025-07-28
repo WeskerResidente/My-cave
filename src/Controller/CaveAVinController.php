@@ -24,6 +24,8 @@ final class CaveAVinController extends AbstractController
     public function index(CaveAVinRepository $caveAvinRepository): Response
     {
         $caves = $caveAvinRepository->findCavesPubliques();
+        // Affiche toutes les caves de l'utilisateur, publiques ou privées
+        $caves = $caveAvinRepository->findBy(['utilisateur' => $this->getUser()]);
 
         return $this->render('cave_a_vin/cave_a_vin.html.twig', [
             'caves' => $caves,
@@ -79,15 +81,15 @@ final class CaveAVinController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // Blocage si la cave est privée et appartient à un autre
         if ($cave->isPrivee() && $cave->getUtilisateur() !== $this->getUser()) {
-            throw $this->createAccessDeniedException("Cette cave est privée.");
+            $this->addFlash('warning', 'Cette cave est privée.');
+            return $this->redirectToRoute('app_cave_a_vin');
         }
+
         return $this->render('cave_a_vin/show.html.twig', [
             'cave' => $cave,
         ]);
     }
-
         #[Route('/cave/{id}/ajouter-vin', name: 'app_cave_ajouter_vin')]
         public function ajouterVinDansCave(Request $request, CaveAVin $cave, EntityManagerInterface $em): Response
         {   
@@ -209,22 +211,29 @@ final class CaveAVinController extends AbstractController
 
         }
         #[Route('/cave/{id}/supprimer', name: 'app_cave_supprimer', methods: ['POST'])]
-        public function supprimer(Request $request, CaveAVin $cave, EntityManagerInterface $em): Response
+        public function supprimer(int $id, Request $request, CaveAVinRepository $repo, EntityManagerInterface $em): Response
         {
-            // Verifie que l'utilisateur est bien le créateur
             $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-            if ($cave->getCreePar() !== $this->getUser()) {
-                throw $this->createAccessDeniedException('Vous ne pouvez pas supprimer cette cave.');
+            $cave = $repo->find($id);
+
+            if (!$cave) {
+                throw $this->createNotFoundException("Cave introuvable.");
             }
 
-            $em->remove($cave);
-            $em->flush();
+            if ($cave->getUtilisateur() !== $this->getUser()) {
+                throw $this->createAccessDeniedException("Vous ne pouvez pas supprimer cette cave.");
+            }
 
-            $this->addFlash('success', 'La cave a bien été supprimée.');
+            if ($this->isCsrfTokenValid('delete-cave-' . $cave->getId(), $request->request->get('_token'))) {
+                $em->remove($cave);
+                $em->flush();
+                $this->addFlash('success', 'Cave supprimée avec succès.');
+            }
 
-            return $this->redirectToRoute('app_cave_a_vin');
+            return $this->redirectToRoute('app_liste_caves');
         }
+
         #[Route('/cave/{caveId}/retirer-vin/{vinId}', name: 'retirer_vin_de_cave', methods: ['POST'])]
         public function retirerVinDeCave(int $caveId, int $vinId, EntityManagerInterface $em): Response
         {
@@ -248,110 +257,172 @@ final class CaveAVinController extends AbstractController
 
             return $this->redirectToRoute('app_cave_show', ['id' => $caveId]);
         }
- #[Route('/vin/{vinId}/ajouter-a-ma-cave', name: 'app_ajouter_vin_a_ma_cave', methods: ['POST'])]
-public function ajouterVinAMaCave(
-    int $vinId,
-    EntityManagerInterface $em,
-    BouteilleDeVinRepository $vinRepo,
-    CaveAVinRepository $caveRepo
-): Response {
-    $user = $this->getUser();
+    #[Route('/vin/{vinId}/ajouter-a-ma-cave', name: 'app_ajouter_vin_a_ma_cave', methods: ['POST'])]
+    public function ajouterVinAMaCave(
+        int $vinId,
+        EntityManagerInterface $em,
+        BouteilleDeVinRepository $vinRepo,
+        CaveAVinRepository $caveRepo
+    ): Response {
+        $user = $this->getUser();
 
-    if (!$user) {
-        $this->addFlash('error', 'Vous devez être connecté pour ajouter un vin à votre cave.');
-        return $this->redirectToRoute('app_login');
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour ajouter un vin à votre cave.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        $vin = $vinRepo->find($vinId);
+
+        if (!$vin) {
+            $this->addFlash('error', 'Vin introuvable.');
+            return $this->redirectToRoute('app_vin_listes');
+        }
+
+        if (!$vin->getRegion() || !$vin->getPays() || !$vin->getPrix()) {
+            $this->addFlash('error', 'Ce vin est incomplet et ne peut pas être ajouté à votre cave.');
+            return $this->redirectToRoute('app_vin_listes');
+        }
+
+        $cave = $caveRepo->findOneBy([
+            'utilisateur' => $user,
+            'nom' => $user->getNomCavePersonnelle(),
+            'isPrivee' => true
+        ]);
+
+        if (!$cave) {
+            $cave = new CaveAVin();
+            $cave->setNom($user->getNomCavePersonnelle());
+            $cave->setUtilisateur($user);
+            $cave->setCreePar($user);
+            $cave->setIsPrivee(true);
+            $cave->setDateAjout(new \DateTimeImmutable());
+            $cave->setDateModification(new \DateTimeImmutable());
+            $cave->setImage('default-cave.jpg');
+            $em->persist($cave);
+            $em->flush();
+        }
+
+        if ($cave->getBouteilles()->contains($vin)) {
+            $this->addFlash('info', 'Ce vin est déjà dans votre cave personnelle.');
+        } else {
+            $cave->addBouteille($vin);
+            $cave->setDateModification(new \DateTimeImmutable());
+            $em->flush();
+            $this->addFlash('success', 'Vin ajouté à votre cave personnelle.');
+        }
+
+        return $this->redirectToRoute('app_mes_vins');
     }
 
-    // Récupération du vin
-    $vin = $vinRepo->find($vinId);
+    #[Route('/mes-vins', name: 'app_mes_vins')]
+    public function mesVins(EntityManagerInterface $em, CaveAVinRepository $caveRepo): Response
+    {
+        $user = $this->getUser();
 
-    if (!$vin) {
-        $this->addFlash('error', 'Vin introuvable.');
-        return $this->redirectToRoute('app_vin_listes');
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        $cave = $caveRepo->findOneBy([
+            'utilisateur' => $user,
+            'nom' => $user->getNomCavePersonnelle(),
+            'isPrivee' => true
+        ]);
+
+        if (!$cave) {
+            $cave = new CaveAVin();
+            $cave->setNom($user->getNomCavePersonnelle());
+            $cave->setUtilisateur($user);
+            $cave->setCreePar($user);
+            $cave->setIsPrivee(true);
+            $cave->setDateAjout(new \DateTimeImmutable());
+            $cave->setDateModification(new \DateTimeImmutable());
+            $cave->setImage('default-cave.jpg');
+            $em->persist($cave);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('app_cave_show', ['id' => $cave->getId()]);
     }
-    if (!$vin->getRegion() || !$vin->getPays() || !$vin->getPrix()) {
-    $this->addFlash('error', 'Ce vin est incomplet et ne peut pas être ajouté à votre cave.');
-    return $this->redirectToRoute('app_vin_listes');
+        #[Route('/caves', name: 'app_liste_caves')]
+    public function toutesCaves(Request $request, CaveAVinRepository $caveRepo): Response
+    {
+        $query = $request->query->get('q');
+
+        if ($query) {
+            $caves = $caveRepo->searchCavesPubliques($query);
+        } else {
+            $caves = $caveRepo->findCavesPubliques();
+        }
+
+        return $this->render('cave_a_vin/app_liste-caves', [
+            'caves' => $caves,
+            'pagination' => [
+                'currentPageNumber' => 1,
+                'pageCount' => 1
+            ],
+            'query' => $request->query->all()
+        ]);
     }
+        #[Route('/cave/{id}/toggle-privacy', name: 'app_toggle_cave_privacy', methods: ['POST'])]
+    public function togglePrivacy(CaveAVin $cave, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-    // Recherche ou création de la cave personnelle
-    $cave = $caveRepo->findOneBy([
-        'utilisateur' => $user,
-        'nom' => 'Ma Cave Personnelle',
-        'isPrivee' => true
-    ]);
+        if ($cave->getUtilisateur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException("Vous ne pouvez pas modifier cette cave.");
+        }
 
-    if (!$cave) {
-        $cave = new \App\Entity\CaveAVin();
-        $cave->setNom('Ma Cave Personnelle');
-        $cave->setUtilisateur($user);
-        $cave->setCreePar($user);
-        $cave->setIsPrivee(true); 
-        $cave->setDateAjout(new \DateTimeImmutable());
+        $cave->setIsPrivee(!$cave->isPrivee());
         $cave->setDateModification(new \DateTimeImmutable());
-        $cave->setImage('default-cave.jpg');
-        $em->persist($cave);
         $em->flush();
+
+        $this->addFlash('success', 'La visibilité de la cave a été mise à jour.');
+
+        return $this->redirectToRoute('app_cave_show', ['id' => $cave->getId()]);
     }
+    #[Route('/cave/{id}/toggle-privee', name: 'app_cave_toggle_privee', methods: ['POST'])]
+    public function togglePrivee(Request $request, CaveAVin $cave, EntityManagerInterface $em): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-    // Empêche d'ajouter le vin s'il est déjà dans la cave
-    if ($cave->getBouteilles()->contains($vin)) {
-        $this->addFlash('info', 'Ce vin est déjà dans votre cave personnelle.');
-    } else {
-        $cave->addBouteille($vin);
-        $cave->setDateModification(new \DateTimeImmutable());
-        $em->flush();
-        $this->addFlash('success', 'Vin ajouté à votre cave personnelle.');
+        if ($cave->getUtilisateur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException("Vous ne pouvez pas modifier cette cave.");
+        }
+
+        if ($this->isCsrfTokenValid('toggle-privee-' . $cave->getId(), $request->request->get('_token'))) {
+            $cave->setIsPrivee(!$cave->isPrivee());
+            $cave->setDateModification(new \DateTimeImmutable());
+            $em->flush();
+
+            $this->addFlash('success', $cave->isPrivee() 
+                ? 'La cave est maintenant privée.' 
+                : 'La cave est maintenant publique.');
+        }
+
+        return $this->redirectToRoute('app_cave_show', ['id' => $cave->getId()]);
     }
+    #[Route('/cave/{id}/toggle-visibilite', name: 'app_toggle_visibilite_cave', methods: ['POST'])]
+    public function toggleVisibilite(
+        CaveAVin $cave,
+        EntityManagerInterface $em,
+        Request $request
+    ): Response {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-    return $this->redirectToRoute('app_mes_vins');
-}
-#[Route('/mes-vins', name: 'app_mes_vins')]
-public function mesVins(EntityManagerInterface $em): Response
-{
+        if ($cave->getUtilisateur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException("Vous n'avez pas le droit de modifier cette cave.");
+        }
 
-    $user = $this->getUser();
+        if ($this->isCsrfTokenValid('toggle-cave-' . $cave->getId(), $request->request->get('_token'))) {
+            $cave->setIsPrivee(!$cave->isPrivee());
+            $em->flush();
 
-    if (!$user) {
-        $this->addFlash('error', 'Vous devez être connecté.');
-        return $this->redirectToRoute('app_login');
+            $this->addFlash('success', 'La visibilité de la cave a été modifiée.');
+        }
+
+        return $this->redirectToRoute('app_cave_show', ['id' => $cave->getId()]);
     }
-
-    // Récupération ou création automatique de la cave personnelle
-    $cave = $em->getRepository(CaveAVin::class)->findOneBy([
-        'utilisateur' => $user,
-        'nom' => 'Ma Cave Personnelle'
-    ]);
-
-    if (!$cave) {
-        $cave = new CaveAVin();
-        $cave->setNom('Ma Cave Personnelle');
-        $cave->setUtilisateur($user);
-        $cave->setCreePar($user);
-        $cave->setDateAjout(new \DateTimeImmutable());
-        $cave->setDateModification(new \DateTimeImmutable());
-        $cave->setImage('default-cave.jpg');
-        $em->persist($cave);
-        $em->flush();
-        $cave->setIsPrivee(true);
-    }
-
-    $vins = $cave->getBouteilles();
-
-    $prixTotal = 0;
-    foreach ($vins as $vin) {
-        $prixTotal += $vin->getPrix();
-    }
-
-    $prixMoyen = count($vins) > 0 ? $prixTotal / count($vins) : 0;
-
-    return $this->render('cave_a_vin/mes_vins.html.twig', [
-        'cave' => $cave,
-        'vins' => $vins,
-        'prixMoyen' => $prixMoyen,
-    ]);
-}
-
-
 
 }

@@ -34,9 +34,8 @@ class CaveAVin
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $dateModification;
-    #[ORM\OneToMany(mappedBy: 'cave', targetEntity: BouteilleDeVin::class, orphanRemoval: true)]
-    private Collection $bouteilles;
-    public function __construct()
+    #[ORM\OneToMany(mappedBy: 'cave', targetEntity: BouteilleDeVin::class)]
+    private Collection $bouteilles;    public function __construct()
     {
         $this->dateAjout = new \DateTimeImmutable();
         $this->dateModification = new \DateTimeImmutable();

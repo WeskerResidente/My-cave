@@ -175,4 +175,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->notes;
     }
+    public function getNomCavePersonnelle(): string
+    {
+        return 'La cave personnelle de ' . $this->getPseudo();
+    }
 }
