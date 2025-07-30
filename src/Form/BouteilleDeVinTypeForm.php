@@ -8,6 +8,7 @@ use App\Entity\Region;
 use App\Entity\TypeDeVin;
 use App\Entity\Appelation;
 use App\Entity\BouteilleDeVin;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -30,7 +31,11 @@ class BouteilleDeVinTypeForm extends AbstractType
             ->add('pays', EntityType::class, [
                 'class' => Pays::class,
                 'choice_label' => 'nom',
-                'label' => 'Pays'
+                'label' => 'Pays',
+                'query_builder' => function(EntityRepository $er) {
+                    return $er->createQueryBuilder('p')
+                              ->orderBy('p.nom', 'ASC');
+                },
             ])
             ->add('region', EntityType::class, [
                 'class' => Region::class,
@@ -38,17 +43,29 @@ class BouteilleDeVinTypeForm extends AbstractType
                 'label' => 'Région',
                 'placeholder' => 'Sélectionnez une région',
                 'required' => true,
+                'query_builder' => function(EntityRepository $er) {
+                    return $er->createQueryBuilder('r')
+                              ->orderBy('r.nom', 'ASC');
+                },
             ])
             ->add('cepage', EntityType::class, [
                 'class' => Cepage::class,
                 'choice_label' => 'nom',
-                'label' => 'Cépage'
+                'label' => 'Cépage',
+                'query_builder' => function(EntityRepository $er) {
+                    return $er->createQueryBuilder('c')
+                              ->orderBy('c.nom', 'ASC');
+                },
             ])
             ->add('typeDeVin', EntityType::class, [
                 'class' => TypeDeVin::class,
                 'choice_label' => 'nom',
                 'label' => 'Type de vin',
                 'placeholder' => 'Sélectionnez un type',
+                'query_builder' => function(EntityRepository $er) {
+                    return $er->createQueryBuilder('t')
+                              ->orderBy('t.nom', 'ASC');
+                },
             ])
             ->add('annee', TextType::class, [
                 'label' => 'Année'
@@ -75,7 +92,11 @@ class BouteilleDeVinTypeForm extends AbstractType
             ->add('appelation', EntityType::class, [
                 'class' => Appelation::class,
                 'choice_label' => 'nom',
-                'label' => 'Appellation'
+                'label' => 'Appellation',
+                'query_builder' => function(EntityRepository $er) {
+                    return $er->createQueryBuilder('a')
+                              ->orderBy('a.nom', 'ASC');
+                },
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',

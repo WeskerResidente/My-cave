@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     stars.forEach((star, index) => {
         star.addEventListener('click', () => {
-            console.log('⭐ Click sur étoile', index + 1); // ✅ devrait s'afficher !
+            console.log('⭐ Click sur étoile', index + 1);
             const newValue = index + 1;
 
             if (alreadyRated) {

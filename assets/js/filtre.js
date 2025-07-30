@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const paysSelect = document.querySelector('select[name="pays"]');
   const regionSelect = document.querySelector('select[name="region"]');
 
-  const allRegionOptions = Array.from(regionSelect.querySelectorAll('option')).slice(1); // exclure le premier (label)
+  const allRegionOptions = Array.from(regionSelect.querySelectorAll('option')).slice(1);
   const regionToPaysMap = {};
 
   // Crée une map région -> pays

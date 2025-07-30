@@ -111,6 +111,7 @@
                 action="{{ path('app_toggle_visibilite_cave', { id: cave.id }) }}"
                 class="form-toggle-privee">
             <input type="hidden" name="_token" value="{{ csrf_token('toggle-cave-' ~ cave.id) }}">
+            {% if isOwner %}
               <button type="submit" class="btn-toggle-privee">
                 {% if cave.isPrivee %}
                   🔓 Rendre la cave publique
@@ -118,6 +119,7 @@
                   🔒 Rendre la cave privée
                 {% endif %}
               </button>
+              {% endif %}
           </form>
         </div>
   </section>
