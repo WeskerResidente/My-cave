@@ -20,8 +20,10 @@
                     <p><strong>Prix :</strong> {{ vin.prix }} €</p>
                     <p><strong>Description :</strong> {{ vin.description }}</p>
 
-                    <a href="{{ urls[vin.id] }}" class="btn btn-success">
-                        ✅ Valider ce vin
+                    <a href="{{ path('validerVin', {'entityId': vin.id}) }}"
+                    class="btn btn-success"
+                    onclick="return confirm('Valider ce vin ?');">
+                    ✅ Valider ce vin
                     </a>
                     
                     <a href="{{ path('admin_refuser_vin', {id: vin.id}) }}" class="btn btn-danger" onclick="return confirm('Supprimer ce vin ?');">

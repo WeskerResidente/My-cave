@@ -8,6 +8,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\{
     BooleanField, TextField, MoneyField, AssociationField, IntegerField, ImageField, TextareaField
 };
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 class BouteilleDeVinCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

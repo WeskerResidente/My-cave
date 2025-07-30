@@ -7,7 +7,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
+    .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 2;
+  }
   .logo {
     display: flex;
     align-items: center;
@@ -134,4 +142,32 @@
     }
     }
 
+}
+/* 2) sur petit écran (<768px) : menu fermé par défaut */
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+
+    /* on affiche le bouton */
+    .menu-toggle {
+      display: block;
+    }
+
+    /* on cache les deux blocs de liens */
+    .nav-links,
+    .auth-links {
+      display: none;
+      width: 100%;
+      flex-direction: column;
+      background-color: v.$color-secondary; /* même fond que la navbar */
+    }
+
+    /* quand on ajoute .open sur .navbar, on rouvre les menus */
+    &.open {
+      .nav-links,
+      .auth-links {
+        display: flex;
+      }
+    }
+  }
 }

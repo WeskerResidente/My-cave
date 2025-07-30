@@ -148,3 +148,57 @@ a.cave-slot {
     text-decoration: underline;
   }
 }
+// 1) Mode mobile‑first : 1 carte
+.carousel-caves {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(1, minmax(180px, 1fr));
+  overflow-x: auto;
+}
+
+// Flèches visibles par défaut (mobile)
+.carousel-arrow {
+  display: block;
+}
+
+// 2) Petite tablette (≥576px) : 2 cartes
+@media (min-width: 576px) {
+  .carousel-caves {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+  /* flèches toujours visibles */
+}
+
+// 3) Tablette (≥768px) : 3 cartes
+@media (min-width: 768px) {
+  .carousel-caves {
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+  }
+}
+
+// Masquer les flèches entre 768px et 991px
+@media (min-width: 360px) and (max-width: 991px) {
+  .carousel-arrow {
+    display: none;
+  }
+}
+
+// 4) Desktop small (≥992px) : 4 cartes + flèches réaffichées
+@media (min-width: 992px) {
+  .carousel-caves {
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+  }
+  .carousel-arrow {
+    display: block;
+  }
+}
+
+// 5) Desktop large (≥1200px) : 5 cartes + flèches toujours visibles
+@media (min-width: 1200px) {
+  .carousel-caves {
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
+  }
+  .carousel-arrow {
+    display: block;
+  }
+}

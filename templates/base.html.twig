@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}Acceuil{% endblock %}</title>
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
@@ -21,15 +22,17 @@
                 <div class="logo">
                     <a href=""><img src="{{ asset('images/logo.png') }}" alt="MyCave Logo"></a>
                 </div>
-
+                <button class="menu-toggle" aria-label="Ouvrir le menu">☰</button>
                 <nav class="nav-links">
                     <a href="{{ path('app_home') }}">Accueil</a>
                     <a href="{{ path('app_vin_listes')}}">Les vins</a>
                     <a href="{{ path('app_liste_caves')}}">Toutes les caves</a>
-                    <a href="{{ path('app_cave_a_vin') }}">My cave</a>
-                    <a href="">Contact</a>
+                    <a href="{{ path('app_cave_a_vin') }}">Mes caves</a>
                     {% if app.user %}
-                        <li><a href="{{ path('app_mes_vins') }}">🍷 Mes Vins</a></li>
+                    <a href="{{ path('app_mes_vins') }}">My cave</a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_admin') }}">🛠 Administration</a></li>
+                            {% endif %}
                     {% endif %}
                 </nav>
 
@@ -38,7 +41,6 @@
                     <form action="{{ path('app_logout') }}" method="post">
                         <a href="{{ path('app_logout') }}">🚪 Déconnexion</a>
                     </form>
-                    <span>Bienvenue, {{ app.user.pseudo ?? app.user.email }}</span>
                 {% else %}
                     <a href="{{ path('app_register') }}">Inscription</a>
                     <a href="{{ path('app_login') }}">Connexion</a>
@@ -58,10 +60,10 @@
         {% block footer %}
             <footer class="site-footer">
                     <div class="footer-links">
-                        <a href="#">À propos</a>
-                        <a href="#">Contact</a>
-                        <a href="#">Politique de confidentialité</a>
-                        <a href="#">Conditions d'utilisation</a>
+                        <a href="{{ path('app_about') }}">À propos</a>
+                        <a href="{{ path('app_contact') }}">Contact</a>
+                        <a href="{{ path('app_privacy') }}">Politique de confidentialité</a>
+                        <a href="{{ path('app_terms') }}">Conditions d'utilisation</a>
                     </div>
                     <div class="footer-copy">
                         &copy; {{ "now"|date("Y") }} MyCave
@@ -70,3 +72,15 @@
         {% endblock %}
     </body>
 </html>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const navbar = document.querySelector('.navbar');
+  const toggle  = document.querySelector('.menu-toggle');
+
+  if (navbar && toggle) {
+    toggle.addEventListener('click', () => {
+      navbar.classList.toggle('open');
+    });
+  }
+});
+</script>

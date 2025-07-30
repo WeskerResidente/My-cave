@@ -285,13 +285,11 @@ final class CaveAVinController extends AbstractController
 
         $cave = $caveRepo->findOneBy([
             'utilisateur' => $user,
-            'nom' => $user->getNomCavePersonnelle(),
             'isPrivee' => true
         ]);
 
         if (!$cave) {
             $cave = new CaveAVin();
-            $cave->setNom($user->getNomCavePersonnelle());
             $cave->setUtilisateur($user);
             $cave->setCreePar($user);
             $cave->setIsPrivee(true);
@@ -326,13 +324,12 @@ final class CaveAVinController extends AbstractController
 
         $cave = $caveRepo->findOneBy([
             'utilisateur' => $user,
-            'nom' => $user->getNomCavePersonnelle(),
             'isPrivee' => true
         ]);
 
         if (!$cave) {
             $cave = new CaveAVin();
-            $cave->setNom($user->getNomCavePersonnelle());
+                    $cave->setNom('Ma cave personnelle');
             $cave->setUtilisateur($user);
             $cave->setCreePar($user);
             $cave->setIsPrivee(true);

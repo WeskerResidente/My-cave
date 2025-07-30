@@ -20,7 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 class DashboardController extends AbstractDashboardController
 {
-    #[Route('/admin', name: 'admin')]
+    #[Route('/admin', name: 'app_admin')]
     public function index(): Response
     {
         // Redirige vers une section par défaut (par exemple les utilisateurs)
@@ -44,7 +44,6 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Caves à vin');
         yield MenuItem::linkToCrud('Caves', 'fas fa-warehouse', CaveAVin::class);
-        yield MenuItem::linkToCrud('Bouteilles dans les caves', 'fas fa-boxes', BouteilleCave::class);
 
         yield MenuItem::section('Vins');
         yield MenuItem::linkToCrud('Vins', 'fas fa-wine-bottle', BouteilleDeVin::class);
@@ -52,6 +51,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Commentaires', 'fas fa-comments', Commentaire::class);
         yield MenuItem::section('Modération');
         yield MenuItem::linkToRoute('Vins à valider', 'fa fa-wine-glass', 'admin_vins_a_valider');
+        yield MenuItem::linkToRoute('Retour au site', 'fas fa-undo', 'app_home');
         // yield MenuItem::section('MODÉRATION');
         // yield MenuItem::linkToCrud('Vins à valider', 'fas fa-key', BouteilleDeVin::class)
         //     ->setController(VinModerationCrudController::class);

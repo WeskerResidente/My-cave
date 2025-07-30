@@ -9,6 +9,7 @@ import './js/swipper.js';
 import './js/filtre.js';
 import './js/Ajax-show.js';
 import './js/stars.js';
+import './js/Ajax-filtre.js';
 
 // console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
 //                 <form method="POST"

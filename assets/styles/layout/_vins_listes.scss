@@ -90,9 +90,33 @@
     }
   .vins-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
     gap: 2rem;
+    
+  // 1 carte en mobile
+  grid-template-columns: repeat(1, minmax(180px, 1fr));
 
+  // 2 cartes à partir de 576px
+  @media (min-width: 576px) {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+
+  // 3 cartes à partir de 768px
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+  }
+
+  // 4 cartes à partir de 992px
+  @media (min-width: 992px) {
+    grid-template-columns: repeat(4, minmax(180px, 1fr));
+  }
+
+  // 5 cartes à partir de 1200px
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(5, minmax(180px, 1fr));
+  }
+
+  
     .vin-card {
       background: rgba(255, 255, 255, 0.85);
       padding: 1rem;
@@ -130,47 +154,57 @@
         }
       }
       .vin-card-back {
-        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
 
         form {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-
+          width: 100%;
+          margin: 0;          // on retire les marges parasites
+          display: block;
           label {
-            margin-bottom: 0.3rem;
-            font-weight: bold;
+            text-align: center;
+            width: 100%;
           }
 
           .select-button-group {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            flex-direction: column;
+            justify-content: center;  // centre horizontalement
             align-items: center;
-            justify-content: center;
+            width: 100%;
+                min-width: 200px; 
             margin-top: 0.5rem;
-
+              align-items: center;
             select {
-              flex: 1;
-              padding: 0.5rem 1rem;
-              font-size: 1rem;
-              border-radius: v.$radius-pill;
-              border: none;
-              background-color: v.$color-accent;
-              color: white;
-              appearance: none;
-              background-repeat: no-repeat;
-              background-position: right 1rem center;
-              background-size: 1rem;
-              padding-right: 2.5rem;
-                          cursor: pointer;
-              &:hover,
-              &:focus {
-                background-color: darken(v.$color-accent, 10%);
-                outline: 2px solid lighten(v.$color-accent, 15%);
-
-              }
-
+            // on donne une largeur relative pour être sûr qu’il ne déborde pas
+            width: 100%;
+            max-width: 100%;
+            margin: 0.5rem auto;
+            padding: 0.6rem 1rem;
+            border-radius: v.$radius-pill;
+            line-height: 1.4;
+            border: none;
+            background-color: v.$color-accent;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='7' viewBox='0 0 10 7' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23fff' stroke-width='2' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 10px 7px;
+            color: white;
+            appearance: none;
+            text-align: center;      // centre le texte à l’intérieur
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: v.$font-size-base;
+              
+            &:hover,
+            &:focus {
+              background-color: darken(v.$color-accent, 10%);
+              outline: 2px solid lighten(v.$color-accent, 15%);
+            }
+            
               option {
                 background-color: v.$color-accent;
                 color: white;

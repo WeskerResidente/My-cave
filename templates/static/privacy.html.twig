@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité{% endblock %}
+
+{% block body %}
+<section class="static-page">
+  <h1>Politique de confidentialité</h1>
+  <p>Chez MyCave, la protection de vos données personnelles est une priorité. Cette politique décrit les informations que nous collectons et comment nous les utilisons.</p>
+
+  <h2>1. Données collectées</h2>
+  <ul>
+    <li><strong>Informations de compte</strong> (email, nom d’utilisateur…) lors de l’inscription.</li>
+    <li><strong>Usage</strong> (pages visitées, recherches effectuées…) pour améliorer nos services.</li>
+    <li><strong>Cookies</strong> pour mémoriser vos préférences de navigation.</li>
+  </ul>
+
+  <h2>2. Utilisation des données</h2>
+  <p>Nous utilisons vos données pour :</p>
+  <ul>
+    <li>Gérer votre authentification et vos permissions.</li>
+    <li>Personnaliser votre expérience (recommandations de vins, etc.).</li>
+    <li>Vous envoyer des notifications et des emails (newsletter).</li>
+  </ul>
+
+  <h2>3. Partage et sécurité</h2>
+  <p>Nous ne vendons ni ne partageons vos informations à des tiers sans votre consentement, sauf obligation légale. 
+  Nous mettons en œuvre des mesures techniques et organisationnelles pour protéger vos données.</p>
+
+  <h2>4. Vos droits</h2>
+  <p>Vous pouvez à tout moment :</p>
+  <ul>
+    <li>Accéder, modifier ou supprimer vos données personnelles.</li>
+    <li>Vous opposer au traitement ou demander la portabilité de vos informations.</li>
+  </ul>
+  <p>Pour exercer ces droits, rendez‑vous dans votre <a href="{{ path('app_mes_vins') }}">espace personnel</a> ou <a href="{{ path('app_contact') }}">contactez‑nous</a>.</p>
+</section>
+{% endblock %}

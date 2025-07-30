@@ -1,7 +1,7 @@
 // COMPONENTS
 @use "components/navbar";
 @use "components/footer";
-
+@use "components/static";
 //LAYOUT
 @use 'layout/home';
 @use "layout/cave-a-vin";
@@ -13,7 +13,7 @@
 @use 'layout/vins_listes';
 @use 'layout/ajout-vin';
 @use  'layout/vin';
-
+@use 'layout/conctatc';
 //ADMIN
 @use 'admin/vin_a_valider';
 //BASE

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact{% endblock %}
+
+{% block body %}
+<section class="contact-page">
+    <div class="contact-container">
+        <h1>Contactez-nous</h1>
+        {% for message in app.flashes('success') %}
+            <div class="flash-success">{{ message }}</div>
+        {% endfor %}
+
+        {{ form_start(form) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.mail) }}
+            {{ form_row(form.sujet) }}
+            {{ form_row(form.message) }}
+            {{ form_row(form.submit) }}
+        {{ form_end(form) }}
+    </div>
+</section>
+{% endblock %}
+

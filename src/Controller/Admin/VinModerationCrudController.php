@@ -1,9 +1,13 @@
 <?php
+
 namespace App\Controller\Admin;
+
 use App\Entity\BouteilleDeVin;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\BouteilleDeVinRepository;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
@@ -20,7 +24,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use Symfony\Component\Routing\Annotation\Route;
+
 class VinModerationCrudController extends AbstractCrudController
 {
     private EntityManagerInterface $em;
@@ -48,10 +52,11 @@ class VinModerationCrudController extends AbstractCrudController
             ->from($entityDto->getFqcn(), $alias)
             ->where("$alias.isValide = false");
     }
+
     public function configureFields(string $pageName): iterable
     {
         yield ImageField::new('images')
-            ->setBasePath('/uploads/vins') // adapte à ton chemin public
+            ->setBasePath('/uploads/vins')
             ->setLabel('Image');
 
         yield TextField::new('nom');
@@ -64,58 +69,37 @@ class VinModerationCrudController extends AbstractCrudController
         yield MoneyField::new('prix')->setCurrency('EUR');
         yield BooleanField::new('isValide')->setLabel('Vin validé ?');
     }
-    public function configureActions(Actions $actions): Actions
-    {
-        $valider = Action::new('valider', '✅ Valider')
-            ->linkToCrudAction('validerVin');
 
-        return $actions
-              
-                    ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
-                        return $action; // ou ->setLabel('Modifier') etc.
-                    })
-                    ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
-                        return $action; // ou ->setLabel('Supprimer') etc.
-    });
+
+    #[Route('/admin/moderation/vins', name: 'admin_moderation_vins')]
+    public function liste(BouteilleDeVinRepository $repo): Response
+    {
+        return $this->render('admin/vins_a_valider.html.twig', [
+            'vins' => $repo->findBy(['isValide'=>false]),
+        ]);
     }
-    public function validerVin(AdminContext $context): Response
+
+    #[Route('/admin/valider-vin/{entityId}', name: 'validerVin')]
+    public function validerVin(int $entityId, BouteilleDeVinRepository $repo): RedirectResponse
     {
-            $vin = $context->getEntity()->getInstance();
-
-            $vin->setIsValide(true);
-
-            $this->addFlash('success', 'Vin validé avec succès.');
-
-            return $this->redirect($context->getReferrer());
-        }
-        public function configureCrud(Crud $crud): Crud
-        {
-            return $crud
-                ->setEntityLabelInSingular('Vin à valider')
-                ->setEntityLabelInPlural('Vins à valider')
-                ->setDefaultSort(['dateAjout' => 'DESC'])
-                ->setSearchFields(['nom', 'description'])
-                ->setPageTitle(Crud::PAGE_INDEX, 'Modération des vins')
-                ->overrideTemplate('crud/index', 'admin/vins_a_valider.html.twig')
-                ->showEntityActionsInlined()
-                ->setEntityPermission('ROLE_ADMIN');
-        }
-        public function refuserVin(BouteilleDeVin $vin, EntityManagerInterface $em): Response
-        {
-            $em->remove($vin);
-            $em->flush();
-
-            $this->addFlash('danger', 'Le vin a été refusé et supprimé.');
-            return $this->redirectToRoute('admin_vins_a_valider');
-        }
-        #[Route('/admin/vin/{id}/valider', name: 'admin_valider_vin')]
-    public function valider(BouteilleDeVin $vin, EntityManagerInterface $em): RedirectResponse
-    {
+        $vin = $repo->find($entityId);
+        if (!$vin) throw $this->createNotFoundException();
         $vin->setIsValide(true);
-        $em->flush();
-
-        $this->addFlash('success', 'Vin validé avec succès.');
-        return $this->redirectToRoute('admin_vins_a_valider');
+        $this->em->flush();
+        return $this->redirectToRoute('admin_moderation_vins');
     }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Vin à valider')
+            ->setEntityLabelInPlural('Vins à valider')
+            ->setDefaultSort(['dateAjout' => 'DESC'])
+            ->setSearchFields(['nom', 'description'])
+            ->setPageTitle(Crud::PAGE_INDEX, 'Modération des vins')
+            ->showEntityActionsInlined()
+            ->setEntityPermission('ROLE_ADMIN');
+    }
+    
 
 }
